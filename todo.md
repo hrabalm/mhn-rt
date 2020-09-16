@@ -1,0 +1,26 @@
+- [x] Specification
+	- [x] Napiš
+	- [x] Pošli
+- [x] Transformations
+	- [x] Ray
+	- [x] Intersection (normal + position)
+		- Maybe matrix instead of vectors?
+- [ ] Ray Tracing
+	- [k] Shadow Bias - Rework/Fix/Whatever
+	- [ ] Light distance compensation
+	- [ ] Light intensity compensation
+	- [x] Reflections
+	- [x] Refractions
+	- [ ] Fresnel
+	- [ ] Direct Illumination through transparent objects?
+- [ ] A single mesh can't currently be used in multiple TMs
+- [ ] Texture orientation is bad? Rotated triangles?
+- [h] Transparency in textures?
+- [ ] Shell mode
+- [ ] Gamma correction?
+- [ ] Cel-Shading
+- [ ] Mip-mapping
+	- https://cs488finalproject.blogspot.com/2011/07/cel-shading.html
+	- https://www.cs.rpi.edu/~cutler/classes/advancedgraphics/S17/final_projects/amy_toshi.pdf
+- Bugs:
+	- [ ] transparency for glass object vs for not existing material
