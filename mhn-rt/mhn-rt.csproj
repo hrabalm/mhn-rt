@@ -61,6 +61,7 @@
     <Compile Include="Renderer.cs" />
     <Compile Include="Sampler.cs" />
     <Compile Include="Statistics.cs" />
+    <Compile Include="TestScenes.cs" />
     <Compile Include="Texture.cs" />
   </ItemGroup>
   <ItemGroup>
