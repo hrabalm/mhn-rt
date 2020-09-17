@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Drawing;
@@ -108,11 +109,18 @@ namespace mhn_rt
                 BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
             };
 
-            scene = TestScenes.TestScene1();
+            SortedDictionary<string, Func<Scene>> scenes = new SortedDictionary<string, Func<Scene>>();
+            scenes.Add("Test Scene 1", TestScenes.TestScene1);
+
+            foreach (var x in scenes)
+                Console.WriteLine(x);
+
+            //scene = TestScenes.TestScene1();
+            scene = scenes["Test Scene 1"]();
 
             int width = 1280;
             int height = 720;
-            int sqrtSpp = 1;
+            int sqrtSpp = 2;
             string filename = "test2.png";
 
             IRayTracer raytracer = new SimpleRayTracer();

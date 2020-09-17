@@ -115,13 +115,18 @@ namespace mhn_rt
             return scene;
         }
 
-        public static SceneNode TestScene1()
+        public static Scene TestScene1()
         {
-            SceneNode scene = new SceneNode();
+            SceneNode rootNode = new SceneNode();
+            Scene scene = new Scene()
+            {
+                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                RootIntersectable = rootNode,
+            };
 
             var t = ObjLoader.LoadObjFile("cat.obj");
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(3.0) * Matrix4d.RotateX(MathHelper.PiOver2) * Matrix4d.RotateZ(MathHelper.Pi) * Matrix4d.RotateY(1.75 * MathHelper.Pi) * Matrix4d.CreateTranslation(0.4, -1.51, -2.5);
-            scene.AddChild(t);
+            rootNode.AddChild(t);
 
             var s = new SceneNode();
             s.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.CreateTranslation(-3.55, 0.75, -6.0); ;
@@ -130,7 +135,7 @@ namespace mhn_rt
             (o.Material as PhongMaterial).Texture = new CheckerTexture3D();
 
             s.AddChild(o);
-            scene.AddChild(s);
+            rootNode.AddChild(s);
 
             s = new SceneNode();
             s.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.25) * Matrix4d.CreateTranslation(-0.45, 0.0, -1.0);
@@ -138,13 +143,13 @@ namespace mhn_rt
             pm.KTransparency = 1.0;
             pm.N = 1.5;
             s.AddChild(new Sphere(Vector3d.Zero, 1.0, pm));
-            scene.AddChild(s);
+            rootNode.AddChild(s);
 
             t = ObjLoader.LoadObjFile("Sylvanas.obj");
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.50) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(2.5, -1.525, -2);
-            scene.AddChild(t);
+            rootNode.AddChild(t);
 
-            scene.AddChild(new Sphere(new Vector3d(0, -1001.5, -1), 1000, o.Material));
+            rootNode.AddChild(new Sphere(new Vector3d(0, -1001.5, -1), 1000, o.Material));
 
             var m2 = new PhongMaterial();
             m2.Color = new Vector3(0.9f, 0.0f, 0.0f);
@@ -152,7 +157,10 @@ namespace mhn_rt
             m2.Ka = 0.1;
             m2.Kd = 0.6;
             m2.KTransparency = 0.0;
-            scene.AddChild(new Sphere(new Vector3d(-1.5, 0, -1.0), 0.25, m2));
+            rootNode.AddChild(new Sphere(new Vector3d(-1.5, 0, -1.0), 0.25, m2));
+
+            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.0, -0.5, -1.0).Normalized(), Intensity = 1.0 });
+            scene.Camera = new Camera(new Vector3d(0.0, 0.0, 0.5), new Vector3d(0.0, 0.0, -1.0), new Vector3d(0.0, 1.0, 0.0));
 
             return scene;
         }
