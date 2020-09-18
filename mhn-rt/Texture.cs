@@ -94,7 +94,10 @@ namespace mhn_rt
             while (y > 1.0)
                 y -= 1.0;
 
-            x = (img.Width-1) * x;
+            lock (img) // TODO: Direct memory access instead of GetPixel?
+            {
+
+                x = (img.Width-1) * x;
             y = (img.Height-1) * y;
 
             int x1, x2, y1, y2;
@@ -106,32 +109,35 @@ namespace mhn_rt
             double dx = x - x1;
             double dy = y - y1;
 
-            if (bilinear && x1 >= 0 && x2 < img.Width && y1 >= 0 && y2 < img.Height) // enough pixels for bilinear interp.
-            {
-                var c11 = img.GetPixel(x1, y1);
-                var c12 = img.GetPixel(x1, y2);
-                var c21 = img.GetPixel(x2, y1);
-                var c22 = img.GetPixel(x2, y2);
+            
+                if (bilinear && x1 >= 0 && x2 < img.Width && y1 >= 0 && y2 < img.Height) // enough pixels for bilinear interp.
+                {
+                    var c11 = img.GetPixel(x1, y1);
+                    var c12 = img.GetPixel(x1, y2);
+                    var c21 = img.GetPixel(x2, y1);
+                    var c22 = img.GetPixel(x2, y2);
 
-                //if (c11.A != 255)
-                //    Co
 
-                R = ((1-dx)*(1-dy)*c11.R + (1-dx)*dy*c12.R + dx*(1-dy)*c21.R + dx*dy*c22.R) / 255.0;
-                G = ((1 - dx) * (1 - dy) * c11.G + (1 - dx) * dy * c12.G + dx * (1 - dy) * c21.G + dx * dy * c22.G) / 255.0;
-                B = ((1 - dx) * (1 - dy) * c11.B + (1 - dx) * dy * c12.B + dx * (1 - dy) * c21.B + dx * dy * c22.B) / 255.0;
-                A = ((1 - dx) * (1 - dy) * c11.A + (1 - dx) * dy * c12.A + dx * (1 - dy) * c21.A + dx * dy * c22.A) / 255.0;
+                    //if (c11.A != 255)
+                    //    Co
+
+                    R = ((1 - dx) * (1 - dy) * c11.R + (1 - dx) * dy * c12.R + dx * (1 - dy) * c21.R + dx * dy * c22.R) / 255.0;
+                    G = ((1 - dx) * (1 - dy) * c11.G + (1 - dx) * dy * c12.G + dx * (1 - dy) * c21.G + dx * dy * c22.G) / 255.0;
+                    B = ((1 - dx) * (1 - dy) * c11.B + (1 - dx) * dy * c12.B + dx * (1 - dy) * c21.B + dx * dy * c22.B) / 255.0;
+                    A = ((1 - dx) * (1 - dy) * c11.A + (1 - dx) * dy * c12.A + dx * (1 - dy) * c21.A + dx * dy * c22.A) / 255.0;
+                }
+                else // otherwise we just select nearest neighbour
+                {
+                    var t = img.GetPixel((int)Math.Round(x), (int)Math.Round(y));
+
+                    R = t.R / 255.0;
+                    G = t.G / 255.0;
+                    B = t.B / 255.0;
+                    A = t.A / 255.0;
+                }
+
+                alpha = A;
             }
-            else // otherwise we just select nearest neighbour
-            {
-                var t = img.GetPixel((int)Math.Round(x), (int)Math.Round(y));
-
-                R = t.R / 255.0;
-                G = t.G / 255.0;
-                B = t.B / 255.0;
-                A = t.A / 255.0;
-            }
-
-            alpha = A;
 
             return new Vector3d(R, G, B);
         }
