@@ -97,19 +97,19 @@ namespace mhn_rt
             lock (img) // TODO: Direct memory access instead of GetPixel?
             {
 
-                x = (img.Width-1) * x;
-            y = (img.Height-1) * y;
+                x = (img.Width - 1) * x;
+                y = (img.Height - 1) * y;
 
-            int x1, x2, y1, y2;
-            x1 = (int)Math.Floor(x);
-            x2 = (int)Math.Ceiling(x);
-            y1 = (int)Math.Floor(y);
-            y2 = (int)Math.Ceiling(y);
+                int x1, x2, y1, y2;
+                x1 = (int)Math.Floor(x);
+                x2 = (int)Math.Ceiling(x);
+                y1 = (int)Math.Floor(y);
+                y2 = (int)Math.Ceiling(y);
 
-            double dx = x - x1;
-            double dy = y - y1;
+                double dx = x - x1;
+                double dy = y - y1;
 
-            
+
                 if (bilinear && x1 >= 0 && x2 < img.Width && y1 >= 0 && y2 < img.Height) // enough pixels for bilinear interp.
                 {
                     var c11 = img.GetPixel(x1, y1);
