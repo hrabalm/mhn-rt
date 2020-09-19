@@ -48,14 +48,13 @@ namespace mhn_rt
                 bitmap.PixelFormat);
             var bitDepth = Bitmap.GetPixelFormatSize(bitmap.PixelFormat);
             var buffer = new byte[data.Width * data.Height * bitDepth / 8];
-            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length); 
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
 
-            for (int x = 0; x < width; x++)
+            int processedRown = 0;
+
+            Action<int, ParallelLoopState> DrawRow = (y, state) =>
             {
-                if (Tracing && x % 10 == 0)
-                    Console.WriteLine($"{((float)100 * x / (width - 1)).ToString("F1")}% done.");
-
-                Action<int, ParallelLoopState> DrawRow = (y, state) =>
+                for (int x = 0; x < width; x++)
                 {
                     // jitter 
                     // 'pixel corners'
@@ -106,15 +105,20 @@ namespace mhn_rt
                     buffer[offset + 1] = (byte)pixelColor.Y; // green
                     buffer[offset + 0] = (byte)pixelColor.Z; // blue
                     buffer[offset + 3] = 255; // alpha
-                };
 
-                if (Multithreading)
-                    Parallel.For(0, height, DrawRow);
-                else
-                {
-                    for (int y = 0; y < height; y++)
-                        DrawRow(y, null);
                 }
+                Interlocked.Increment(ref processedRown);
+
+                if (Tracing && y % 10 == 0)
+                    Console.WriteLine($"{((float)100 * processedRown / (height - 1)).ToString("F1")}% done.");
+            };
+
+            if (Multithreading)
+                Parallel.For(0, height, DrawRow);
+            else
+            {
+                for (int y = 0; y < height; y++)
+                    DrawRow(y, null);
             }
 
             Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
