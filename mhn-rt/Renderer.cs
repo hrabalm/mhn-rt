@@ -110,7 +110,11 @@ namespace mhn_rt
                 Interlocked.Increment(ref processedRown);
 
                 if (Tracing && y % 10 == 0)
-                    Console.WriteLine($"{((float)100 * processedRown / (height - 1)).ToString("F1")}% done.");
+                {
+                    float done = (float)processedRown / (height - 1);
+                    //Console.WriteLine($"{(100*done).ToString("F1")}% done.\tEstimated time remaining: {new TimeSpan((long)((1.0f-done)*stopwatch.Elapsed.Ticks)).ToString(@"hh\h\ mm\m\i\n\ ss\s")}");
+                    Console.WriteLine($"{(100 * done).ToString("F1")}% done.");
+                }
             };
 
             if (Multithreading)
