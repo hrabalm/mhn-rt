@@ -115,16 +115,17 @@ namespace mhn_rt
             foreach (var x in scenes)
                 Console.WriteLine(x);
 
-            //scene = TestScenes.TestScene1();
             scene = scenes["Test Scene 1"]();
 
-            int width = 1280;
-            int height = 720;
-            int sqrtSpp = 2;
+            int width;
+            int height;
+            int sqrtSpp;
             string filename = "test2.png";
 
+            Help.GetConfigFromUser(out width, out height, out sqrtSpp, out scene);
+
             IRayTracer raytracer = new SimpleRayTracer();
-            //IRayTracer raytracer = new NormalRayTracer();
+            //IRayTracer raytracer = new NormalRayTracer(); // visualizes normals by mapping them as RGB colors
             var renderer = new Renderer(raytracer);
             var output = renderer.Render(scene, width, height, sqrtSpp);
 

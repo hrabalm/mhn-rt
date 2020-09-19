@@ -97,5 +97,30 @@ namespace mhn_rt
 
             return true;
         }
+
+        static void AskForInt(string name, int defaultValue, int minValue, int maxValue, out int result)
+        {
+            while (true)
+            {
+                Console.Write($"Specify {name} [{defaultValue}]: ");
+                string i = Console.ReadLine();
+                if (i.Length == 0)
+                {
+                    result = defaultValue;
+                    break;
+                }
+                else if (i.Length > 0 && int.TryParse(i, out result) && result >= minValue && result <= maxValue)
+                    break;
+            }
+        }
+
+        public static void GetConfigFromUser(out int width, out int height, out int sqrtSpp, out Scene scene)
+        {
+            AskForInt("width", 1280, 1, int.MaxValue, out width);
+            AskForInt("height", 720, 1, int.MaxValue, out height);
+            AskForInt("square root of samples per pixel (natural number)", 2, 1, int.MaxValue, out sqrtSpp);
+
+            scene = TestScenes.TestScene1();
+        }
     }
 }
