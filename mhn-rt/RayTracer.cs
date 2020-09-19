@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -57,7 +58,7 @@ namespace mhn_rt
                     
                     if (shadows) // TODO: Rework
                     {
-                        Statistics.ShadowingRays++;
+                        Interlocked.Increment(ref Statistics.ShadowingRays);
                         if (!light.IsVisible(i1, scene))
                             continue;
                     }
@@ -88,7 +89,7 @@ namespace mhn_rt
                     Vector3d rv = Help.Reflect(ray.direction, i1.normal);
                     Vector3d normalOffset = i1.normal * scene.ShadowBias;
                     reflective = GetRayColor(new Ray(i1.position + normalOffset, rv), scene, depth - 1, (float)(weight * reflectivity / weightSum));
-                    Statistics.ReflectionRays++;
+                    Interlocked.Increment(ref Statistics.ReflectionRays);
                 }
                 else
                     reflectivity = 0.0f;
@@ -109,7 +110,7 @@ namespace mhn_rt
                     var offset = refracted.Normalized() * 0.0001; // move slightly in the direction of the ray
 
                     refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
-                    Statistics.RefractionRays++;
+                    Interlocked.Increment(ref Statistics.RefractionRays);
                 }
                 else
                     transparency = 0.0f;

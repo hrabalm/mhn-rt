@@ -8,10 +8,10 @@ namespace mhn_rt
 {
     static class Statistics
     {
-        public static int PrimaryRays { get; set; } = 0;
-        public static int ShadowingRays { get; set; } = 0;
-        public static int ReflectionRays { get; set; } = 0;
-        public static int RefractionRays { get; set; } = 0;
+        public static int PrimaryRays  = 0;
+        public static int ShadowingRays  = 0;
+        public static int ReflectionRays  = 0;
+        public static int RefractionRays  = 0;
 
         public static string Print()
         {

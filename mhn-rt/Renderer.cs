@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
@@ -78,7 +79,7 @@ namespace mhn_rt
                             double rY = minY + (j + random.NextDouble()) * (dY / (spp));
 
                             rays.Add(scene.Camera.GetRay(rX, rY));
-                            Statistics.PrimaryRays++;
+                            Interlocked.Increment(ref Statistics.PrimaryRays);
                         }
                     }
 
