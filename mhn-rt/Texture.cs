@@ -17,43 +17,47 @@ namespace mhn_rt
 
     class CheckerTexture3D : ITexture
     {
-        Vector3d c1 = new Vector3d(1.0, 0.0, 0.0);
-        Vector3d c2 = new Vector3d(0.0, 1.0, 0.0);
+        public Vector3d Color1 { get; set; } = new Vector3d(1.0, 0.0, 0.0);
+        public Vector3d Color2 { get; set; } = new Vector3d(0.0, 1.0, 0.0);
+        public double Frequency { get => mult*MathHelper.TwoPi; set => mult = value/MathHelper.TwoPi; }
+        public double Period { get => 1 / Frequency; set => Frequency = (1 / value); }
+        public double Alpha { get; set; } = 1.0;
+
+        double mult = 25;
         //double period = 0.01;
 
         public Vector3d GetColor(Vector2 uv, Vector3d point, out double alpha)
         {
-            alpha = 1;
-
-            double mult = 25;
-
+            alpha = Alpha;
             var s = Math.Sin(mult * point.X) * Math.Sin(mult * point.Y) * Math.Sin(mult * point.Z);
 
             if (s < 0)
-                return c1;
+                return Color1;
             else
-                return c2;
+                return Color2;
         }
     }
 
     class CheckerTexture : ITexture
     {
-        Vector3d c1 = new Vector3d(1.0, 0.0, 0.0);
-        Vector3d c2 = new Vector3d(0.0, 1.0, 0.0);
+        public Vector3d Color1 { get; set; } = new Vector3d(1.0, 0.0, 0.0);
+        public Vector3d Color2 { get; set; } = new Vector3d(0.0, 1.0, 0.0);
+        public double Frequency { get => mult * MathHelper.TwoPi; set => mult = value / MathHelper.TwoPi; }
+        public double Period { get => 1 / Frequency; set => Frequency = (1 / value); }
+        public double Alpha { get; set; } = 1.0;
+
+        double mult = 25;
         //double period = 0.01;
 
         public Vector3d GetColor(Vector2 uv, Vector3d point, out double alpha)
         {
-            alpha = 1;
-
-            double mult = 100;
-
+            alpha = Alpha;
             var s = Math.Sin(mult * uv.X) * Math.Sin(mult * uv.Y);
 
             if (s < 0)
-                return c1;
+                return Color1;
             else
-                return c2;
+                return Color2;
         }
     }
 
