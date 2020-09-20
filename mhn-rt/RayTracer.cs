@@ -107,7 +107,7 @@ namespace mhn_rt
                     else
                         refracted = Help.Refract(ray.direction, i1.normal, (i1.material as PhongMaterial).N, 1.0);
 
-                    var offset = refracted.Normalized() * 0.0001; // move slightly in the direction of the ray
+                    var offset = refracted.Normalized() * scene.ShadowBias; // move slightly in the direction of the ray
 
                     refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
                     Interlocked.Increment(ref Statistics.RefractionRays);
