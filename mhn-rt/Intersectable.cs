@@ -35,6 +35,11 @@ namespace mhn_rt
         /// </summary>
         public bool Enter { get; set; }
 
+        public Vector3d OffsetPosition(double shadowBias)
+        {
+            return position + normal * shadowBias;
+        }
+
         public Intersection Transform(Matrix4d m)
         {
             Intersection ret = new Intersection

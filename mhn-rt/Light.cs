@@ -36,7 +36,7 @@ namespace mhn_rt
         {
             float distance = (float)(Position - i.position).Length;
 
-            Vector3d origin = i.position + i.normal * scene.ShadowBias;
+            Vector3d origin = i.OffsetPosition(scene.ShadowBias);
 
             direction = new Ray(origin, this.Position - origin);
 
@@ -45,8 +45,7 @@ namespace mhn_rt
 
         public void GetShadingInfo(Intersection i, Scene scene, out bool isVisible, out Vector3d lightDirection, out Vector3 intensity)
         {
-            Vector3d normalOffset = i.normal * scene.ShadowBias;
-            Vector3d origin = i.position + normalOffset;
+            Vector3d origin = i.OffsetPosition(scene.ShadowBias);
 
             // check visibility
             var intersections = scene.RootIntersectable.Intersect(new Ray(origin, this.Position - origin));
@@ -63,8 +62,7 @@ namespace mhn_rt
 
         public bool IsVisible(Intersection i, Scene scene)
         {
-            Vector3d normalOffset = i.normal * scene.ShadowBias;
-            Vector3d origin = i.position + normalOffset;
+            Vector3d origin = i.OffsetPosition(scene.ShadowBias);
 
             var intersections = scene.RootIntersectable.Intersect(new Ray(origin, this.Position - origin));
 
@@ -90,8 +88,7 @@ namespace mhn_rt
 
         public bool IsVisible(Intersection i, Scene scene)
         {
-            Vector3d normalOffset = i.normal * scene.ShadowBias;
-            Vector3d origin = i.position + normalOffset;
+            Vector3d origin = i.OffsetPosition(scene.ShadowBias);
 
             var intersections = scene.RootIntersectable.Intersect(new Ray(origin, -Direction));
 
