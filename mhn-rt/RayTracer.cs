@@ -73,7 +73,7 @@ namespace mhn_rt
                     Vector3d r = Help.Reflect(dlRay.direction, i1.normal);
                     Vector3d v = ray.direction;
 
-                    float h = 5; // "glosinesss ~ for cos^h beta"
+                    double h = pm.H; // "glosinesss ~ for cos^h beta"
                     d = Vector3d.Dot(r.Normalized(), v.Normalized());
 
                     if (d > 0)
