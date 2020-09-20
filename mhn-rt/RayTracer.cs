@@ -110,6 +110,10 @@ namespace mhn_rt
                         refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
                         Interlocked.Increment(ref Statistics.RefractionRays);
                     }
+                    else
+                    {
+                        refractive = reflective;
+                    }
                 }
                 else
                     transparency = 0.0f;
