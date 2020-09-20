@@ -194,6 +194,10 @@ namespace mhn_rt
 
                 var tokens = line.Split(new char[] { ' ', '\t' }, options: StringSplitOptions.RemoveEmptyEntries); // split by whitespace
 
+                if (tokens.Length < 1)
+                    continue;
+
+                double r, g, b, m;
                 switch (tokens[0])
                 {
                     case "newmtl":
@@ -202,13 +206,33 @@ namespace mhn_rt
                         materials.Add(tokens[1], currentMaterial);
                         break;
                     case "Ka": // currently only single coefficient for all basic colors is supported
-                        (currentMaterial.Material as PhongMaterial).Ka = double.Parse(tokens[1]);
+                        r = double.Parse(tokens[1]);
+                        g = double.Parse(tokens[2]);
+                        b = double.Parse(tokens[3]);
+                        m = Math.Max(r, Math.Max(g, b));
+                        (currentMaterial.Material as PhongMaterial).Ka = m;
                         break;
                     case "Kd":
-                        (currentMaterial.Material as PhongMaterial).Kd = double.Parse(tokens[1]);
+                        r = double.Parse(tokens[1]);
+                        g = double.Parse(tokens[2]);
+                        b = double.Parse(tokens[3]);
+                        m = Math.Max(r, Math.Max(g, b));
+                        r /= m;
+                        g /= m;
+                        b /= m;
+                        (currentMaterial.Material as PhongMaterial).Color = new Vector3((float)r, (float)g, (float)b);
+                        (currentMaterial.Material as PhongMaterial).Kd = m;
                         break;
                     case "Ks":
-                        (currentMaterial.Material as PhongMaterial).Ks = double.Parse(tokens[1]);
+                        r = double.Parse(tokens[1]);
+                        g = double.Parse(tokens[2]);
+                        b = double.Parse(tokens[3]);
+                        m = Math.Max(r, Math.Max(g, b));
+                        r /= m;
+                        g /= m;
+                        b /= m;
+                        (currentMaterial.Material as PhongMaterial).Color = new Vector3((float)r, (float)g, (float)b);
+                        (currentMaterial.Material as PhongMaterial).Ks = m;
                         break;
                     case "Ke":
                         //(currentMaterial.Material as PhongMaterial).Ke = double.Parse(tokens[1]);
