@@ -118,12 +118,13 @@ namespace mhn_rt
 
         public static Scene TestScene1()
         {
-            SceneNode rootNode = new SceneNode();
+            
             Scene scene = new Scene()
             {
                 BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
-                RootIntersectable = rootNode,
             };
+
+            SceneNode rootNode = scene.RootIntersectable;
 
             var t = ObjLoader.LoadObjFile("cat.obj");
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(3.0) * Matrix4d.RotateX(MathHelper.PiOver2) * Matrix4d.RotateZ(MathHelper.Pi) * Matrix4d.RotateY(1.75 * MathHelper.Pi) * Matrix4d.CreateTranslation(0.4, -1.51, -2.5);
@@ -173,14 +174,42 @@ namespace mhn_rt
             return scene;
         }
 
-        public static Scene CornellBox()
+        public static Scene TestScene2()
         {
-            SceneNode rootNode = new SceneNode();
             Scene scene = new Scene()
             {
                 BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
-                RootIntersectable = rootNode,
             };
+            SceneNode rootNode = scene.RootIntersectable;
+
+            PhongMaterial npm = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1 };
+            PhongMaterial glass = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1, KTransparency = 0.95, N=1.1 };
+            npm.Texture = new CheckerTexture3D();
+            (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.1, 0.3, 0.1);
+            (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
+            rootNode.AddChild(new Sphere(new Vector3d(0, -1001, -1), 1000, npm));
+
+            rootNode.AddChild(new Sphere(new Vector3d(0.25, 0.0, 0), 0.35, glass));
+            rootNode.AddChild(new Sphere(new Vector3d(1.1, 0, 0), 0.35, npm));
+
+            var t = ObjLoader.LoadObjFile("teapot.obj");
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.35) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.25, 0.0, -0.75);
+            rootNode.AddChild(t);
+
+            scene.LightSources.Add(new PointLight { Position = new Vector3d(-0.5, 0.5, 1.0), Intensity = 3.0 });
+            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.5, -0.5), Intensity = 0.1 });
+            scene.Camera = new Camera(new Vector3d(0.0, 0.5, 1.0), new Vector3d(0.0, 0.0, 0.0), new Vector3d(0.0, 1.0, 0.0));
+
+            return scene;
+        }
+
+        public static Scene CornellBox()
+        {
+            Scene scene = new Scene()
+            {
+                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+            };
+            SceneNode rootNode = scene.RootIntersectable;
 
             var t = ObjLoader.LoadObjFile("CornellBox-Original.obj");
             t.ToParent = Matrix4d.Scale(0.2);
@@ -206,6 +235,7 @@ namespace mhn_rt
         public static void RegisterScenes()
         {
             SceneRegistry.Scenes.Add("Test Scene 1", TestScenes.TestScene1);
+            SceneRegistry.Scenes.Add("Test Scene 2", TestScenes.TestScene2);
             SceneRegistry.Scenes.Add("zCornell Box", TestScenes.CornellBox);
         }
     }

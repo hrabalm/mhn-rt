@@ -17,11 +17,16 @@ namespace mhn_rt
 {
     class Scene
     {
-        public IIntersectable RootIntersectable { get; set; }
+        public SceneNode RootIntersectable { get; } = new SceneNode();
         public IList<ILight> LightSources { get; set; } = new List<ILight>();
         public Camera Camera { get; set; }
         public Vector3 BackgroundColor { get; set; }
         public double ShadowBias { get; set; } = 0.00000001;
+
+        public Scene()
+        {
+            RootIntersectable.Material = new PhongMaterial(); // default material for the scene
+        }
     }
 
     class SceneNode : IIntersectable
