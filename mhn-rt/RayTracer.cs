@@ -133,33 +133,6 @@ namespace mhn_rt
         }
     }
 
-    class SimplePathTracer : IRayTracer
-    {
-        public Vector3d GetRayColor(Ray ray, Scene scene, int depth, float weight)
-        {
-            var intersections = scene.RootIntersectable.Intersect(ray);
-
-            if (depth == 0 || weight < 0.05f)
-                return new Vector3d(0.0f, 0.0f, 0.0f);
-
-            if (intersections.Count > 0)
-            {
-                intersections[0].normal.Normalized();
-                Ray scattered;
-                Vector3 attentuation_tmp;
-                if ((intersections[0].material as LambertianMaterial).Scatter(ray, intersections[0], out attentuation_tmp, out scattered))
-                {
-                    Vector3d attenuation = (Vector3d)attentuation_tmp;
-                    return attenuation * GetRayColor(scattered, scene, depth - 1, (float)(weight * Math.Max(attenuation.X, Math.Max(attenuation.Y, attenuation.Z))));
-                }
-                    
-                return new Vector3d(0.0f, 0.0f, 0.0f);
-            }
-
-            return scene.Background.GetBackgroundColor(ray);
-        }
-    }
-
     class NormalRayTracer : IRayTracer
     {
         public Vector3d GetRayColor(Ray ray, Scene scene, int depth, float weight)

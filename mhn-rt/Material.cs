@@ -20,45 +20,6 @@ namespace mhn_rt
         double KTransparency { get; set; }
     }
 
-    class LambertianMaterial : IMaterial
-    {
-        public Vector3 Color { get; set; }
-        public double KTransparency { get; set; } = 0.0;
-        static Random random = new Random();
-        public LambertianMaterial(Vector3 color)
-        {
-            this.Color = color;
-        }
-
-        public bool Scatter(Ray inRay, Intersection intersection, out Vector3 attenuation, out Ray scatteredRay)
-        {
-            var r = Help.RandomUnitVector();
-
-            scatteredRay = new Ray(intersection.position, intersection.normal + r);
-            attenuation = Color;
-            return true;
-        }
-    }
-
-    class MetalMaterial : IMaterial
-    {
-        public Vector3 Color { get; set; }
-        public double KTransparency { get; set; } = 0.0;
-        public MetalMaterial(Vector3 color)
-        {
-            this.Color = color;
-        }
-
-        public bool Scatter(Ray inRay, Intersection intersection, out Vector3 attenuation, out Ray scatteredRay)
-        {
-            Vector3d reflected = Help.Reflect(inRay.direction.Normalized(), intersection.normal);
-            scatteredRay = new Ray(intersection.position, reflected);
-            attenuation = Color;
-
-            return (Vector3d.Dot(scatteredRay.direction, intersection.normal) > 0);
-        }
-    }
-
     class PhongMaterial : IMaterial
     {
         public double KTransparency { get; set; } = 0.0;
