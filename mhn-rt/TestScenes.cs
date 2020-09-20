@@ -6,116 +6,6 @@ namespace mhn_rt
 {
     static class TestScenes
     {
-        public static SceneNode Ciri()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("ciri.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.02) * Matrix4d.RotateY(Math.PI) * Matrix4d.CreateTranslation(0.0, -8.8, -9.25);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Sylvanas()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("Sylvanas.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.70) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(0.0, -1.45, -2);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Square()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("square.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(2.0) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(0.0, -1.5, -2);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Teapot()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("teapot.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0.0, 0.0, -4.0);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Bunny()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("bunny.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.60) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0.30, -1.0, -2.0);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Buddha()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("buddha.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.75) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0.0, -3.0, -5.0);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Dragon()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("dragon.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.5) * Matrix4d.RotateY(MathHelper.PiOver2 + 0.25) * Matrix4d.CreateTranslation(0.0, 0.0, -1.0);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Oak()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("white_oak.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.5) * Matrix4d.RotateY(MathHelper.PiOver2 + 0.25) * Matrix4d.CreateTranslation(0.0, 0.0, -1.0);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Cat()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("cat.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(2.35) * Matrix4d.RotateX(MathHelper.PiOver2) * Matrix4d.RotateZ(MathHelper.Pi) * Matrix4d.RotateY(1.75 * MathHelper.Pi) * Matrix4d.CreateTranslation(0.4, -0.75, -1.25);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
-        public static SceneNode Erato()
-        {
-            SceneNode scene = new SceneNode();
-
-            var t = ObjLoader.LoadObjFile("erato-1.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(100.0) * Matrix4d.CreateTranslation(0.0, 13000.0, -5);
-            scene.AddChild(t);
-
-            return scene;
-        }
-
         public static Scene TestScene1()
         {
             
@@ -183,7 +73,7 @@ namespace mhn_rt
             SceneNode rootNode = scene.RootIntersectable;
 
             PhongMaterial npm = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1 };
-            PhongMaterial glass = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1, KTransparency = 0.95, N=1.1 };
+            PhongMaterial glass = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1, KTransparency = 0.95, N=1.1, Color = new Vector3(0.0f, 0.75f, 0.25f)};
             npm.Texture = new CheckerTexture3D();
             (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.1, 0.3, 0.1);
             (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
