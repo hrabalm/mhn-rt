@@ -20,7 +20,7 @@ namespace mhn_rt
         public SceneNode RootIntersectable { get; } = new SceneNode();
         public IList<ILight> LightSources { get; set; } = new List<ILight>();
         public Camera Camera { get; set; }
-        public Vector3 BackgroundColor { get; set; }
+        public IBackground Background { get; set; } = new SolidBackground();
         public double ShadowBias { get; set; } = 0.00000001;
 
         public Scene()

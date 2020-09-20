@@ -129,7 +129,7 @@ namespace mhn_rt
                 return color;
             }
 
-            return (Vector3d)scene.BackgroundColor;
+            return scene.Background.GetBackgroundColor(ray);
         }
     }
 
@@ -156,7 +156,7 @@ namespace mhn_rt
                 return new Vector3d(0.0f, 0.0f, 0.0f);
             }
 
-            return (Vector3d)scene.BackgroundColor;
+            return scene.Background.GetBackgroundColor(ray);
         }
     }
 
@@ -174,7 +174,7 @@ namespace mhn_rt
                 return new Vector3d(0.5f+(float)intersections[0].normal.X/2.0f, 0.5f + (float)intersections[0].normal.Y / 2.0f, 0.5f + (float)intersections[0].normal.Z / 2.0f);
             }
 
-            return (Vector3d)scene.BackgroundColor;
+            return Vector3d.Zero;
         }
     }
 }

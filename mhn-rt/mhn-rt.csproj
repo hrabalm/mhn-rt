@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Background.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="FastTriangleMesh.cs" />
     <Compile Include="Help.cs" />

@@ -11,7 +11,7 @@ namespace mhn_rt
             
             Scene scene = new Scene()
             {
-                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                Background = GradientBackground.BasicSky,
             };
 
             SceneNode rootNode = scene.RootIntersectable;
@@ -68,7 +68,7 @@ namespace mhn_rt
         {
             Scene scene = new Scene()
             {
-                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                Background = GradientBackground.BasicSky,
             };
             SceneNode rootNode = scene.RootIntersectable;
 
@@ -100,7 +100,7 @@ namespace mhn_rt
         {
             Scene scene = new Scene()
             {
-                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                Background = GradientBackground.BasicSky,
             };
             SceneNode rootNode = scene.RootIntersectable;
 
@@ -122,7 +122,7 @@ namespace mhn_rt
         {
             Scene scene = new Scene()
             {
-                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                Background = GradientBackground.BasicSky,
             };
             SceneNode rootNode = scene.RootIntersectable;
 
