@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using OpenTK;
 
 namespace mhn_rt
@@ -133,6 +134,9 @@ namespace mhn_rt
             var o = new Sphere(Vector3d.Zero, 3.0, new PhongMaterial());
             (o.Material as PhongMaterial).KTransparency = 0.0;
             (o.Material as PhongMaterial).Texture = new CheckerTexture3D();
+            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Period = 0.01;
+            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Color1 = new Vector3d(0.6, 0.2, 0.2);
+            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Color2 = new Vector3d(0.2, 0.6, 0.2);
 
             s.AddChild(o);
             rootNode.AddChild(s);
@@ -149,7 +153,11 @@ namespace mhn_rt
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.50) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(2.5, -1.525, -2);
             rootNode.AddChild(t);
 
-            rootNode.AddChild(new Sphere(new Vector3d(0, -1001.5, -1), 1000, o.Material));
+            PhongMaterial npm = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1 };
+            npm.Texture = new CheckerTexture3D();
+            (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.1, 0.3, 0.1);
+            (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
+            rootNode.AddChild(new Sphere(new Vector3d(0, -1001.5, -1), 1000, npm));
 
             var m2 = new PhongMaterial();
             m2.Color = new Vector3(0.9f, 0.0f, 0.0f);
