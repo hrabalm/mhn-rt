@@ -1,6 +1,6 @@
 # mhn-rt
 
-`mhn-rt` is a a simple toy raytracer. It implements a variant of Witted raytracing algorithm and Phong material. Currently supported functions:
+`mhn-rt` is a a simple toy raytracer. It implements a variant of Whitted raytracing algorithm and Phong material. Currently supported functions:
 
 ## Supported features:
 - Rendering scenes made of spheres and triangle meshes
