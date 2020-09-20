@@ -103,15 +103,10 @@ namespace mhn_rt
 
         public void GetShadingInfo(Intersection i, Scene scene, out bool isVisible, out Vector3d lightDirection, out Vector3 intensity)
         {
-            Vector3d normalOffset = i.normal * scene.ShadowBias;
-            Vector3d origin = i.position + normalOffset;
-
-            // check visibility
-            var intersections = scene.RootIntersectable.Intersect(new Ray(origin, -Direction));
-            if (intersections.Count > 0) // TODO
-                isVisible = false;
-            else
+            if (IsVisible(i, scene))
                 isVisible = true;
+            else
+                isVisible = false;
 
             intensity = Color * (float)Intensity;
 
