@@ -173,9 +173,40 @@ namespace mhn_rt
             return scene;
         }
 
+        public static Scene CornellBox()
+        {
+            SceneNode rootNode = new SceneNode();
+            Scene scene = new Scene()
+            {
+                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
+                RootIntersectable = rootNode,
+            };
+
+            var t = ObjLoader.LoadObjFile("CornellBox-Original.obj");
+            t.ToParent = Matrix4d.Scale(0.2);
+            rootNode.AddChild(t);
+
+            var la = new PointLight() { Intensity = 0.25, Position = new Vector3d(0.0 * 0.2, 1.9 * 0.2, -0.03 * 0.2) };
+            var l1 = new PointLight() { Intensity = 0.125, Position = new Vector3d(-0.24 * 0.2, 1.98 * 0.2, 0.16 * 0.2) };
+            var l2 = new PointLight() { Intensity = 0.125, Position = new Vector3d(-0.24 * 0.2, 1.98 * 0.2, -0.22 * 0.2) };
+            var l3 = new PointLight() { Intensity = 0.125, Position = new Vector3d(0.23 * 0.2, 1.98 * 0.2, -0.22 * 0.2) };
+            var l4 = new PointLight() { Intensity = 0.125, Position = new Vector3d(0.23 * 0.2, 1.98 * 0.2, 0.16 * 0.2) };
+            //la = new PointLight() { Intensity = 0.5, Position = new Vector3d(0.0, 0.25, 0.5) };
+
+            scene.LightSources.Add(la);
+            //scene.LightSources.Add(l1);
+            //scene.LightSources.Add(l2);
+            //scene.LightSources.Add(l3);
+            //scene.LightSources.Add(l4);
+            scene.Camera = new Camera(new Vector3d(0.0, 0.2, 0.4), new Vector3d(0.0, 0.0, -1.0), new Vector3d(0.0, 1.0, 0.0));
+
+            return scene;
+        }
+
         public static void RegisterScenes()
         {
             SceneRegistry.Scenes.Add("Test Scene 1", TestScenes.TestScene1);
+            SceneRegistry.Scenes.Add("zCornell Box", TestScenes.CornellBox);
         }
     }
 }
