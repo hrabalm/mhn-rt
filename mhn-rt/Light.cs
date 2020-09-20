@@ -75,7 +75,7 @@ namespace mhn_rt
     class DirectionalLight : ILight
     {
         public Vector3 Color { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);
-        public Vector3d Position { get; set; }
+        public Vector3d Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public double Intensity { get; set; } = 1.0;
 
         public Vector3d Direction { get; set; }
