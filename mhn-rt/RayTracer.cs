@@ -36,7 +36,7 @@ namespace mhn_rt
                 PhongMaterial pm = (PhongMaterial)i1.material;
 
                 Vector3d diffuse = new Vector3d(0, 0, 0);
-                Vector3d specular = new Vector3d(0, 0, 0); // specular "reflection" of the light
+                Vector3d specular = new Vector3d(0, 0, 0); // specular reflection of either light source or other object
 
                 // normalize coefficients so that they add up to 1.0
                 double Kd = pm.Kd / (pm.Kd + pm.Ks + pm.Ka);
@@ -48,7 +48,7 @@ namespace mhn_rt
                 double localAlpha = i1.localAlpha;
                 double globalAlpha = 1.0 - (i1.material as PhongMaterial).KTransparency;
                 if (globalAlpha < 0.0)
-                    globalAlpha = 0.0; // TODO:Fix negative values
+                    globalAlpha = 0.0;
 
                 // direct illumination
                 foreach (var light in scene.LightSources)
@@ -82,7 +82,7 @@ namespace mhn_rt
 
                 double reflectivity;
                 Vector3d reflective = new Vector3d();
-                if (reflections && Ks*weight/(weightSum+Ks) >= 0.05f)
+                if (reflections && Ks*weight/(weightSum+Ks) >= 0.05f || (refraction && (globalAlpha < 0.95 || localAlpha < 0.95)))
                 {
                     weightSum += Ks;
                     reflectivity = Ks;
@@ -99,18 +99,19 @@ namespace mhn_rt
                 Vector3d refractive = new Vector3d();
                 if (refraction && (globalAlpha < 0.95 || localAlpha < 0.95)) // TODO: Fix
                 {
-                    
                     weightSum += transparency;
-                    Vector3d refracted = ray.direction;
-                    if (i1.Enter)
-                        refracted = Help.Refract(ray.direction, i1.normal, 1.0, (i1.material as PhongMaterial).N);
-                    else
-                        refracted = Help.Refract(ray.direction, i1.normal, (i1.material as PhongMaterial).N, 1.0);
+                    Vector3d refracted;
+                    refracted = Help.Refract(ray.direction, i1.normal, (i1.material as PhongMaterial).N);
 
-                    var offset = refracted.Normalized() * scene.ShadowBias; // move slightly in the direction of the ray
-
-                    refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
-                    Interlocked.Increment(ref Statistics.RefractionRays);
+                    if (refracted != Vector3d.Zero)
+                    {
+                        refracted.Normalize();
+                        var offset = refracted * scene.ShadowBias; // move slightly in the direction of the ray
+                        refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
+                        Interlocked.Increment(ref Statistics.RefractionRays);
+                    }
+                    //else
+                    //    refractive = reflective;
                 }
                 else
                     transparency = 0.0f;
@@ -121,15 +122,18 @@ namespace mhn_rt
                 double reflectWeight;
                 double refractWeight = transparency;
 
-                //return (Kd * diffuse + Ka * ambient + Ks * specular
-                //    + reflectivity * reflective
-                //    + transparency * refractive)/(weightSum);
-
                 specular = new Vector3d(Math.Max(specular.X, reflective.X), Math.Max(specular.Y, reflective.Y), Math.Max(specular.Z, reflective.Z));
 
-                Vector3d color = globalAlpha * (Kd * localAlpha * diffuse + Ka * ambient * localAlpha + Ks * specular * localAlpha + (Ks+Kd+Ka) * (1.0 - localAlpha) * refractive);
-                color += (1.0 - globalAlpha) * (0.1 * reflective + 0.9 * refractive);
-                //if (localAlpha < 0.5)
+                Vector3d color = Vector3d.Zero;
+                color += (1.0 - transparency) * (Kd * localAlpha * diffuse + Ka * ambient * localAlpha + Ks * specular * localAlpha + (Ks+Kd+Ka) * (1.0 - localAlpha) * refractive);
+
+
+                double cos = Vector3d.Dot(ray.direction.Normalized(), i1.normal.Normalized());
+                double n = cos >= 0.0 ? (i1.material as PhongMaterial).N : 1.0 / (i1.material as PhongMaterial).N;
+                double schlick = Help.Schlick(Math.Abs(cos), n);
+                schlick = 0;
+                color += transparency * (schlick * reflective + (1.0-schlick) * refractive);
+
                 return color;
             }
 

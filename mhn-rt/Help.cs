@@ -20,16 +20,48 @@ namespace mhn_rt
             return vector - 2 * Vector3d.Dot(vector, normal) * normal;
         }
 
-        public static Vector3d Refract(Vector3d vector, Vector3d normal, double n0, double n1)
+        public static Vector3d Refract(Vector3d vector, Vector3d normal, double n)
         {
-            if (-0.001 < n0 - n1 && n0 - n1 < 0.001)
+            if (n - 1.0 <= double.Epsilon)
                 return vector;
 
-            double cos_alpha = Vector3d.Dot(-vector.Normalized(), normal.Normalized());
-            Vector3d r1 = (n0 / n1) * (vector * cos_alpha * normal);
-            Vector3d r2 = -Math.Sqrt(Math.Abs(1.0 - r1.LengthSquared)) * normal;
+            vector.Normalize();
+            normal.Normalize();
 
-            return r1 + r2;
+            double d = Vector3d.Dot(vector, normal);
+            double cos;
+            if (d < 0.0) // entering ray
+            {
+                vector = -vector;
+                cos = -d;
+                n = 1.0 / n;
+            }
+            else // leaving ray
+            {
+                cos = d;
+            }
+
+            // Does complete reflection occur?
+            if (n * Math.Sqrt(1.0 - cos * cos) > 1.0)
+                return Vector3d.Zero;
+
+            Vector3d perp = n * (vector + cos * normal);
+            Vector3d parl = -normal * Math.Sqrt(Math.Abs(1.0 - perp.LengthSquared));
+
+            return perp + parl;
+        }
+
+        /// <summary>
+        /// https://en.wikipedia.org/wiki/Schlick%27s_approximation
+        /// </summary>
+        /// <param name="cos"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static double Schlick(double cos, double n)
+        {
+            double r = (1 - n) / (1 + n);
+            r = r * r;
+            return r + (1 - r) * Math.Pow(1 - cos, 5);
         }
 
         /// <summary>
