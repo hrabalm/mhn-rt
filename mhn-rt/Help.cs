@@ -141,10 +141,20 @@ namespace mhn_rt
                     scene = scenes.ElementAt(selected-1).Value();
                     break;
                 }
-
-                //break; // to remove
             }
-            //scene = TestScenes.TestScene1();
+        }
+
+        public static void GetFilenameFromUser(string defaultFilename, out string filename)
+        {
+            filename = null;
+            while (filename == null)
+            {
+                Console.Write($"Specify output filename [{defaultFilename}]: ");
+                filename = Console.ReadLine();
+
+                if (filename.Length == 0)
+                    filename = defaultFilename;
+            }
         }
     }
 }

@@ -119,9 +119,10 @@ namespace mhn_rt
             int width;
             int height;
             int sqrtSpp;
-            string filename = "test2.png";
+            string filename;
 
             Help.GetConfigFromUser(SceneRegistry.Scenes, out width, out height, out sqrtSpp, out scene);
+            Help.GetFilenameFromUser("out.png", out filename);
 
             IRayTracer raytracer = new SimpleRayTracer();
             //IRayTracer raytracer = new NormalRayTracer(); // visualizes normals by mapping them as RGB colors
