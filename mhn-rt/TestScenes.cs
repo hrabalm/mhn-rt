@@ -73,25 +73,25 @@ namespace mhn_rt
             SceneNode rootNode = scene.RootIntersectable;
 
             PhongMaterial npm = new PhongMaterial() { Kd = 0.5, Ks = 0.3, Ka = 0.2 };
-            PhongMaterial glass = new PhongMaterial() { Kd = 0.1, Ks = 0.8, Ka = 0.1, KTransparency = 0.95, N=1.1, Color = new Vector3(0.8f, 0.95f, 0.8f)};
+            PhongMaterial glass = new PhongMaterial() { Kd = 0.1, Ks = 0.8, Ka = 0.1, KTransparency = 0.95, N=1.1, Color = new Vector3(0.93f, 1.0f, 0.93f)};
             npm.Texture = new CheckerTexture3D();
             (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.1, 0.3, 0.1);
             (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
             rootNode.AddChild(new Sphere(new Vector3d(0, -1000.5, 0), 1000, npm));
 
             rootNode.AddChild(new Sphere(new Vector3d(0.25, 0.0, 0), 0.5, glass));
-            rootNode.AddChild(new Sphere(new Vector3d(1.2, -0.05, 0), 0.45, npm));
+            rootNode.AddChild(new Sphere(new Vector3d(1.55, -0.10, 0), 0.40, npm));
 
             var t = ObjLoader.LoadObjFile("teapot.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.35) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.45, 0.0, -0.75);
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.35) * Matrix4d.RotateY(0.1) * Matrix4d.CreateTranslation(-1.5, 0.0, -0.75);
             rootNode.AddChild(t);
 
             PhongMaterial tpt = new PhongMaterial() { Kd = 0.1, Ks = 0.8, Ka = 0.1, Color = new Vector3(0.0f, 0.5f, 1.0f) };
             t.Material = tpt;
 
-            scene.LightSources.Add(new PointLight { Position = new Vector3d(-0.5, 0.5, 1.0), Intensity = 3.0 });
+            scene.LightSources.Add(new PointLight { Position = new Vector3d(0.5, 0.5, 1.0), Intensity = 3.0 });
             scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.5, -0.5), Intensity = 0.1 });
-            scene.Camera = new Camera(new Vector3d(0.0, 0.125, 1.0), new Vector3d(0.0, 0.0, 0.0), new Vector3d(0.0, 1.0, 0.0));
+            scene.Camera = new Camera(new Vector3d(-0.1, 0.125, 1.2), new Vector3d(0.0, 0.0, 0.0), new Vector3d(0.0, 1.0, 0.0));
 
             return scene;
         }
