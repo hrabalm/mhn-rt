@@ -172,5 +172,10 @@ namespace mhn_rt
 
             return scene;
         }
+
+        public static void RegisterScenes()
+        {
+            SceneRegistry.Scenes.Add("Test Scene 1", TestScenes.TestScene1);
+        }
     }
 }

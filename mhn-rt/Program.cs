@@ -96,6 +96,11 @@ namespace mhn_rt
         }
     }
 
+    static class SceneRegistry
+    {
+        public static SortedDictionary<string, Func<Scene>> Scenes = new SortedDictionary<string, Func<Scene>>();
+    }
+
     class Program
     {
         static Random random = new Random(42);
@@ -109,20 +114,14 @@ namespace mhn_rt
                 BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
             };
 
-            SortedDictionary<string, Func<Scene>> scenes = new SortedDictionary<string, Func<Scene>>();
-            scenes.Add("Test Scene 1", TestScenes.TestScene1);
-
-            foreach (var x in scenes)
-                Console.WriteLine(x);
-
-            scene = scenes["Test Scene 1"]();
+            TestScenes.RegisterScenes();
 
             int width;
             int height;
             int sqrtSpp;
             string filename = "test2.png";
 
-            Help.GetConfigFromUser(scenes, out width, out height, out sqrtSpp, out scene);
+            Help.GetConfigFromUser(SceneRegistry.Scenes, out width, out height, out sqrtSpp, out scene);
 
             IRayTracer raytracer = new SimpleRayTracer();
             //IRayTracer raytracer = new NormalRayTracer(); // visualizes normals by mapping them as RGB colors
