@@ -111,7 +111,7 @@ namespace mhn_rt
 
                 if (Tracing && y % 10 == 0)
                 {
-                    float done = (float)processedRown / (height - 1);
+                    float done = (float)processedRown / height;
                     //Console.WriteLine($"{(100*done).ToString("F1")}% done.\tEstimated time remaining: {new TimeSpan((long)((1.0f-done)*stopwatch.Elapsed.Ticks)).ToString(@"hh\h\ mm\m\i\n\ ss\s")}");
                     Console.WriteLine($"{(100 * done).ToString("F1")}% done.");
                 }
