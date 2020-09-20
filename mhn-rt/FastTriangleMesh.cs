@@ -496,7 +496,10 @@ namespace mhn_rt
         {
             // TODO: Convert from baryocentric coords to cartesian coords
             Vector2 a, b, c;
-            GetTexureCoords(triangleIndex, out a, out b, out c);
+            if (HasTextureCoords(triangleIndex))
+                GetTexureCoords(triangleIndex, out a, out b, out c);
+            else
+                return Vector2.Zero;
 
             double u = intersection_uv.X;
             double v = intersection_uv.Y;
