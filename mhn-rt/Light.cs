@@ -22,7 +22,15 @@ namespace mhn_rt
     {
         public Vector3 Color { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);
         public Vector3d Position { get; set; }
+
+        /// <summary>
+        /// Light "intensity" at distance 1
+        /// </summary>
         public double Intensity { get; set; } = 1.0;
+
+        public float ConstAttenuation { get; set; } = 0.3f;
+        public float LinearAttenuation { get; set; } = 0.3f;
+        public float SquareAttenuation { get; set; } = 0.4f;
 
         public Vector3 GetIntensityAndDirection(Intersection i, Scene scene, out Ray direction)
         {
@@ -32,7 +40,7 @@ namespace mhn_rt
 
             direction = new Ray(origin, this.Position - origin);
 
-            return Color * (float)Intensity / (distance * distance);
+            return Color * (float)Intensity / (ConstAttenuation + LinearAttenuation * distance + SquareAttenuation * distance * distance);
         }
 
         public void GetShadingInfo(Intersection i, Scene scene, out bool isVisible, out Vector3d lightDirection, out Vector3 intensity)
