@@ -103,16 +103,9 @@ namespace mhn_rt
 
     class Program
     {
-        static Random random = new Random(42);
-
         static void Main(string[] args)
         {
-            SceneNode root = new SceneNode();
-            Scene scene = new Scene()
-            {
-                RootIntersectable = root,
-                BackgroundColor = new Vector3(0xA9 / 255.0f, 0xA9 / 255.0f, 0xA9 / 255.0f),
-            };
+            Scene scene;
 
             TestScenes.RegisterScenes();
 
