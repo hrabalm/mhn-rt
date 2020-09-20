@@ -12,8 +12,6 @@ namespace mhn_rt
     /// http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html).
     ///
     /// Not all performance related concepts are implemented.
-    ///
-    /// Triangle intersection code is mostly ported from TriangleMesh
     /// </summary>
     class TriangleManager : IIntersectable
     {
@@ -49,7 +47,6 @@ namespace mhn_rt
             DefaultMesh = new Mesh();
             meshes.Add(DefaultMesh);
             DefaultMesh.Parent = this;
-            //this.InsertChild(DefaultMesh, Matrix4d.Identity);
         }
 
         #region Intersections
@@ -59,7 +56,6 @@ namespace mhn_rt
             Vector3d p1 = ray.direction;
             List<Intersection> result = new List<Intersection>();
             RecursiveIntersect(root, ray, ref result);
-            //result.Sort(); // Sort by T-value // TODO: check
             return new List<Intersection>(result);
         }
 
@@ -85,18 +81,11 @@ namespace mhn_rt
                     RecursiveIntersect(inner.children[0], ray, ref result);
                     RecursiveIntersect(inner.children[1], ray, ref result);
                 }
-                // else return
             }
             else
             {
                 throw new NotImplementedException();
             }
-        }
-
-
-        public void CompleteIntersection(Intersection inter)
-        {
-            throw new NotImplementedException("Intersections should be completed in Meshes");
         }
 
         protected Vector3 FindSmoothNormal(int triangleIndex, Vector2d uv)
@@ -433,7 +422,6 @@ namespace mhn_rt
         public int AddMesh(Mesh mesh)
         {
             meshes.Add(mesh);
-            //this.InsertChild(mesh, Matrix4d.Identity);
             return meshes.Count - 1;
         }
 
@@ -446,7 +434,6 @@ namespace mhn_rt
 
         public Mesh GetMesh(int meshIndex)
         {
-            //Debug.Assert(meshIndex == 0, "You aren't supposed to access DefaultMesh");
             return meshes[meshIndex];
         }
 
@@ -494,7 +481,7 @@ namespace mhn_rt
 
         public Vector2 GetTriangleUV(int triangleIndex, Vector2 intersection_uv)
         {
-            // TODO: Convert from baryocentric coords to cartesian coords
+            // Convert from baryocentric coords to cartesian coords
             Vector2 a, b, c;
             if (HasTextureCoords(triangleIndex))
                 GetTexureCoords(triangleIndex, out a, out b, out c);
@@ -509,9 +496,8 @@ namespace mhn_rt
         }
     }
 
-    class Mesh// : ISolid, ITimeDependent
+    class Mesh
     {
-        //public ISceneNode Parent { get; set; }
         public TriangleManager Parent { get; set; }
         public IMaterial Material
         {
@@ -528,10 +514,6 @@ namespace mhn_rt
 
         public Matrix4d ToParent { get; set; }
         public Matrix4d FromParent { get; set; }
-        //public ICollection<ISceneNode> Children { get => null; set => throw new NotImplementedException(); }
-        public bool ObjectRoot { get => false; set => throw new NotImplementedException(); }
-
-        protected Dictionary<string, object> attributes;
 
         public bool Smooth { get; set; } = true;
         public bool Shell { get; set; } = false;
@@ -544,14 +526,13 @@ namespace mhn_rt
         public virtual void IntersectTriangle(int triangleIndex, Ray ray, ref List<Intersection> result)
         {
             TriangleManager tm = Parent;
-            //(Material as PhongMaterial).Texture = new CheckerTexture3D();
 
             Vector3 a, b, c;
             tm.GetTriangleVertices(triangleIndex, out a, out b, out c);
             Vector2d uv;
 
             double t = Help.RayTriangleIntersection(ref ray, ref a, ref b, ref c, out uv);
-            if (double.IsInfinity(t) || t <= double.Epsilon) // TODO: Needs more testing
+            if (double.IsInfinity(t) || t <= double.Epsilon)
                 return;
 
             Vector3 normal = Vector3.Cross(b - a, c - a); // I need approx. normal to determine Front and Enter
@@ -575,91 +556,25 @@ namespace mhn_rt
             Intersection i = new Intersection()
             {
                 t = t,
-                //Enter = !Shell ? front : true, // when using shell, every 1st intersection enters
-                //Front = front,
                 material = Material,
-                //material = new LambertianMaterial(new Vector3(0.8f, 0.8f, 0.0f)),
-                //material = new MetalMaterial(new Vector3(0.8f, 0.8f, 0.8f)),
                 position = ray.origin + t * ray.direction,
                 normal = (Vector3d)normal,
-                //color = new Vector3(1.0f, 1.0f, 1.0f),
                 color = (Vector3)newColor,
                 uv = front ? (Vector2)uv : (Vector2) uv,
                 //uv = enter ? (Vector2)uv : new Vector2((float)(1-uv.X), (float)uv.Y), // TODO: Check - leaving ray might not need color information
                 Enter = front,
-                //localAlpha = localAlpha,
             };
 
             i.localAlpha = localAlpha;
 
-            //Console.WriteLine(i.localAlpha);
-
-            //i.Solid = mesh;
-            //i.SolidData = new TriangleIntersectionInfo { triangleIndex = triangleIndex, uv = uv };
-
             result.Add(i);
 
             // 2nd intersection
-            if (Shell)
+            if (Shell) // TODO: Implement shell mode
             {
-                //t += Intersection.SHELL_THICKNESS;
-                //Intersection i2 = new Intersection(this)
-                //{
-                //    T = t,
-                //    Enter = !Shell ? !front : false, // when using shell, every 2nd intersection exits
-                //    Front = !front,
-                //    CoordLocal = p0 + t * p1
-                //};
 
-                //i2.Solid = mesh;
-                //i2.SolidData = new TriangleIntersectionInfo { triangleIndex = triangleIndex, uv = uv };
-                //result.Add(i2);
             }
         }
-
-        public void CompleteIntersection(Intersection inter)
-        {
-            /*
-            TriangleManager tm = Parent;
-
-            TriangleIntersectionInfo info = (TriangleIntersectionInfo)inter.SolidData;
-            Vector3 a, b, c;
-            tm.GetTriangleVertices(info.triangleIndex, out a, out b, out c);
-
-            Vector3 normalf;
-            if (Smooth && tm.HasNormals(info.triangleIndex))
-            {
-                normalf = FindSmoothNormal(info.triangleIndex, info.uv, tm);
-            }
-            else
-            {
-                normalf = Vector3.Cross(b - a, c - a);
-            }
-
-            Vector3d normal = (Vector3d)normalf;
-            */
-            //inter.Normal = normal;
-            //inter.Normal = Vector3d.TransformNormal(normal, inter.LocalToWorld);
-        }
-
-        /// <summary>
-        /// Returns transform from the Local space (Solid) to the World space.
-        /// </summary>
-        /// <returns>Transform matrix.</returns>
-        //public Matrix4d ToWorld()
-        //{
-            //return Parent == null ? Matrix4d.Identity : ToParent * Parent.ToWorld(); // this breaks reflections from objects surface for some reason
-                                                                                     //return Matrix4d.Identity; // and this sometimes works for very some strange reason TODO: Look into this
-        //}
-
-        /// <summary>
-        /// Returns transform from the Local space (Solid) to the Object space (subject to animation).
-        /// </summary>
-        /// <returns>Transform matrix.</returns>
-        //public Matrix4d ToObject()
-        //{
-            //return ObjectRoot || Parent == null ? Matrix4d.Identity : ToParent * Parent.ToObject();
-        //}
 
         protected Vector3 FindSmoothNormal(int triangleIndex, Vector2d uv, TriangleManager tm)
         {
@@ -916,4 +831,3 @@ namespace mhn_rt
 
     #endregion
 }
-//*/
