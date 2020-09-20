@@ -231,7 +231,8 @@ namespace mhn_rt
                         r /= m;
                         g /= m;
                         b /= m;
-                        (currentMaterial.Material as PhongMaterial).Color = new Vector3((float)r, (float)g, (float)b);
+                        if (m > 0.05)
+                            (currentMaterial.Material as PhongMaterial).Color = new Vector3((float)r, (float)g, (float)b);
                         (currentMaterial.Material as PhongMaterial).Ks = m;
                         break;
                     case "Ke":
@@ -243,6 +244,7 @@ namespace mhn_rt
                         (currentMaterial.Material as PhongMaterial).H = double.Parse(tokens[1]);
                         break;
                     case "Ni":
+                        (currentMaterial.Material as PhongMaterial).N = double.Parse(tokens[1]);
                         break;
                     case "d":
                         // TODO: Might fail with -halo
