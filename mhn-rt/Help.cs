@@ -114,13 +114,37 @@ namespace mhn_rt
             }
         }
 
-        public static void GetConfigFromUser(out int width, out int height, out int sqrtSpp, out Scene scene)
+        public static void GetConfigFromUser(SortedDictionary<string, Func<Scene>> scenes, out int width, out int height, out int sqrtSpp, out Scene scene)
         {
             AskForInt("width", 1280, 1, int.MaxValue, out width);
             AskForInt("height", 720, 1, int.MaxValue, out height);
             AskForInt("square root of samples per pixel (natural number)", 2, 1, int.MaxValue, out sqrtSpp);
 
-            scene = TestScenes.TestScene1();
+            while (true) // scene selection
+            {
+                Console.WriteLine("Scenes:");
+                int i = 1;
+                foreach (var x in scenes)
+                {
+                    Console.WriteLine($"{i++}. {x.Key}");
+                }
+                Console.Write("Selected scene [1]: ");
+                string line = Console.ReadLine();
+                int selected;
+                if (line.Length == 0)
+                {
+                    scene = scenes.ElementAt(0).Value();
+                    break;
+                }
+                else if (int.TryParse(line, out selected) && selected > 0 && selected < i)
+                {
+                    scene = scenes.ElementAt(selected-1).Value();
+                    break;
+                }
+
+                //break; // to remove
+            }
+            //scene = TestScenes.TestScene1();
         }
     }
 }
