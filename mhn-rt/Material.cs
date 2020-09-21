@@ -25,7 +25,7 @@ namespace mhn_rt
         public double KTransparency { get; set; } = 0.0;
         public Vector3 Color { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);// will be ignored if Texture != null
         public ITexture Texture { get; set; }
-        public ITexture BumpMap { get; set; }
+        public ITexture NormalMap { get; set; }
 
         /// <summary>
         /// Diffuse reflection

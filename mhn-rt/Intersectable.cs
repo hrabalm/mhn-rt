@@ -97,13 +97,13 @@ namespace mhn_rt
                     localAlpha = 1.0;
                 }
 
-                if (pm.BumpMap != null)
+                if (pm.NormalMap != null)
                 {
                     double la;
-                    var bc = pm.BumpMap.GetColor(uv, position, out la);
-                    Vector3d dn = new Vector3d(bc.X - 0.5, bc.Y - 0.5, bc.Z - 0.5);
-                    //normal.Normalize();
+                    var bc = pm.NormalMap.GetColor(uv, position, out la);
+                    Vector3d dn = 2.0 * bc - Vector3d.One;
                     normal += dn;
+                    normal.Normalize();
                 }
             }
         }

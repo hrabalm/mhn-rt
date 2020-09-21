@@ -110,10 +110,33 @@ namespace mhn_rt
             (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
             rootNode.AddChild(new Sphere(new Vector3d(0, -1001, -1), 1000, npm));
 
+            //var t = ObjLoader.LoadObjFile("chickenV2.obj");
+            var t = ObjLoader.LoadObjFile("bunny.obj");
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.75, -1.1, -0.85);
+            rootNode.AddChild(t);
+
+            t = ObjLoader.LoadObjFile("bunny.obj");
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0, -1.1, -0.85);
+            t.Material = new PhongMaterial();
+            (t.Material as PhongMaterial).Texture = new CheckerTexture3D();
+            (t.objects[0] as TriangleManager).GetTrianglesMesh(0).Material = t.Material;
+            rootNode.AddChild(t);
+
+            //PhongMaterial tpt = new PhongMaterial() { Kd = 0.8, Ks = 0.0, Ka = 0.2 };
+            //t.Material = tpt;
+            t = new SceneNode();
+            var pm = new PhongMaterial() { Kd = 0.10, Ks = 0.0, Ka = 0.0, H = 500};
+            //pm.Texture = new BitmapTexture("Orange_001_COLOR.png");
+            pm.NormalMap = new BitmapTexture("brickwall_normal.jpg");
+            t.AddChild(new Sphere(new Vector3d(2.0, 0.5, -1.0), 0.8, pm));
+            rootNode.AddChild(t);
+            // todo normal map + texture
+
             scene.LightSources.Add(new PointLight { Position = new Vector3d(-0.5, 0.5, 1.0), Intensity = 1.0 });
-            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.5, -0.5), Intensity = 0.5 });
-            scene.Camera = new Camera(new Vector3d(0.0, 0.25, 1.0), new Vector3d(0.0, 0.0, 0.0), new Vector3d(0.0, 1.0, 0.0));
+            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.1, -0.75), Intensity = 0.25 });
+            scene.Camera = new Camera(new Vector3d(0.0, 0.0, 1.0), new Vector3d(0.0, 0.0, -0.8), new Vector3d(0.0, 1.0, 0.0));
             //scene.Camera.
+            // TODO: Set higher FOW
 
             return scene;
         }

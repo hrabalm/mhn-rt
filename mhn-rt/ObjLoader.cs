@@ -257,7 +257,7 @@ namespace mhn_rt
                         //(currentMaterial.Material as PhongMaterial).Texture = new CheckerTexture3D();
                         break;
                     case "bump":
-                        (currentMaterial.Material as PhongMaterial).BumpMap = new BitmapTexture(tokens[1]);
+                        (currentMaterial.Material as PhongMaterial).NormalMap = new BitmapTexture(tokens[1]);
                         break;
                     default:
                         Debug.WriteLine($"Token {tokens[0]} is not handled in .mtl files.");
