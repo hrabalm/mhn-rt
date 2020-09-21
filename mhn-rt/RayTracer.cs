@@ -90,7 +90,7 @@ namespace mhn_rt
                     {
                         refracted.Normalize();
                         var offset = refracted * scene.ShadowBias; // move slightly in the direction of the ray
-                        refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)((1 - globalAlpha) + (1 - localAlpha)));
+                        refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, weight * (float)((1 - globalAlpha) + (1 - localAlpha)));
                         Interlocked.Increment(ref Statistics.RefractionRays);
                     }
                     else
