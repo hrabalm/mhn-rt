@@ -3,6 +3,13 @@ using System;
 
 namespace mhn_rt
 {
+    /// <summary>
+    /// Implementation of positionable camera is inspired by
+    /// https://raytracing.github.io/books/RayTracingInOneWeekend.html#positionablecamera
+    /// 
+    /// Alternative approach would be to generate transformation matrix, generate rays themselves
+    /// from origin through fixed viewport and then transform them, but I like this approach better.
+    /// </summary>
     class Camera
     {
         /// <summary>
@@ -24,6 +31,12 @@ namespace mhn_rt
         Vector3d lookAt;
         Vector3d up;
 
+        /// <summary>
+        /// Create default camera with aspect ratio 16:9 and Vertical Field of View of 90 degrees
+        /// </summary>
+        /// <param name="lookFrom"></param>
+        /// <param name="lookAt"></param>
+        /// <param name="up"></param>
         public Camera(Vector3d lookFrom, Vector3d lookAt, Vector3d up) : this(lookFrom, lookAt, up, 16.0 / 9.0, 90) { }
 
         /// <summary>
