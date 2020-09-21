@@ -123,12 +123,12 @@ namespace mhn_rt
                 specular = new Vector3d(Math.Max(specular.X, reflective.X), Math.Max(specular.Y, reflective.Y), Math.Max(specular.Z, reflective.Z));
 
                 Vector3d color = Vector3d.Zero;
-                color += (1.0 - transparency) * (Kd * localAlpha * diffuse + Ka * ambient * localAlpha + Ks * specular * localAlpha + (Ks+Kd+Ka) * (1.0 - localAlpha) * refractive);
+                color += globalAlpha * (Kd * localAlpha * diffuse + Ka * ambient * localAlpha + Ks * specular * localAlpha + (Ks+Kd+Ka) * (1.0 - localAlpha) * refractive);
 
                 double cos = Vector3d.Dot(ray.direction.Normalized(), i1.normal.Normalized());
                 double n = cos >= 0.0 ? (i1.material as PhongMaterial).N : 1.0 / (i1.material as PhongMaterial).N;
                 double schlick = Help.Schlick(Math.Abs(cos), n);
-                color += (Vector3d)i1.color * transparency * (schlick * reflective + (1.0-schlick) * refractive);
+                color += (Vector3d)i1.color * (1-globalAlpha) * (schlick * reflective + (1.0-schlick) * refractive);
 
                 return color;
             }
