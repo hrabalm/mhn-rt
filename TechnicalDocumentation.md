@@ -40,10 +40,10 @@
 - recursive function `GetRayColor`
 	- max depth of recursion + contribution threshold (if a ray doesn't contribute to resulting color, it is skipped)
 	
-### Intersectable.cs:IIntersectable`
+### Intersectable.cs:IIntersectable
 - objects in the scene implement this interface, e.g. `Intersectable.cs:Sphere` and `TriangleManager.cs:TriangleManager`
 
-### TriangleManager.cs:IIntersectable`
+### TriangleManager.cs:TriangleManager
 - represents a single object made of triangles, can be loaded from .obj using `ObjLoader`
 - internally stores triangles in Bounding Volume Hierarchy(BVH) to enable fast intersection search (log N instead of N):
 	- BVH is a binary tree such that Axis Aligned Bounding Box(AABB) of a parent encloses those of its children
@@ -64,6 +64,9 @@
 			
 		- some performance related ideas are implemented as described in PBRT, e.g.:
 			- before splitting, nodes are seperated into several buckets and only boundaries between these buckets are considered as points of split, detailed description is present in the book
+
+### TriangleManager.cs:Mesh
+- represents a subgroup of triangles in its parent `TriangleManager` sharing a common material. All `TriangleManager` have a single `.DefaultMesh`. Additional `Mesh` are for example when loading .obj files that use material groups.
 
 ## Creating a new scene
 
