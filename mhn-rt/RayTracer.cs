@@ -1,12 +1,6 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace mhn_rt
 {
@@ -18,14 +12,15 @@ namespace mhn_rt
     {
         bool shadows = true;
         bool reflections = true;
-        bool refraction = true;
+        bool refractions = true;
+
+        public double MinWeight { get; set; } = 0.01;
 
         public Vector3d GetRayColor(Ray ray, Scene scene, int depth, float weight)
         {
-            // TODO: Weights and Reflectivity can be 1+ in bad scenes, probably gotta normalize them
             var intersections = scene.RootIntersectable.Intersect(ray);
 
-            if (depth == 0 || weight < 0.05f)
+            if (depth == 0 || weight < MinWeight)
                 return new Vector3d(0.0, 0.0, 0.0);
 
             if (intersections.Count > 0)
@@ -43,12 +38,8 @@ namespace mhn_rt
                 double Ks = pm.Ks / (pm.Kd + pm.Ks + pm.Ka);
                 double Ka = pm.Ka / (pm.Kd + pm.Ks + pm.Ka);
 
-                double weightSum = Kd+Ks+Ka;
-
                 double localAlpha = i1.localAlpha;
                 double globalAlpha = 1.0 - (i1.material as PhongMaterial).KTransparency;
-                if (globalAlpha < 0.0)
-                    globalAlpha = 0.0;
 
                 // direct illumination
                 foreach (var light in scene.LightSources)
@@ -56,7 +47,7 @@ namespace mhn_rt
                     Ray dlRay;
                     Vector3d intensity = (Vector3d)light.GetIntensityAndDirection(i1, scene, out dlRay);
                     
-                    if (shadows) // TODO: Rework
+                    if (shadows)
                     {
                         Interlocked.Increment(ref Statistics.ShadowingRays);
                         if (!light.IsVisible(i1, scene))
@@ -80,26 +71,18 @@ namespace mhn_rt
                         specular += intensity * (Vector3d)i1.color * Math.Pow(d, h);
                 }
 
-                double reflectivity;
                 Vector3d reflective = new Vector3d();
-                if (reflections && Ks*weight/(weightSum+Ks) >= 0.05f || (refraction && (globalAlpha < 0.95 || localAlpha < 0.95)))
+                if (reflections && Ks*weight >= MinWeight)
                 {
-                    weightSum += Ks;
-                    reflectivity = Ks;
                     Vector3d rv = Help.Reflect(ray.direction, i1.normal);
                     Vector3d normalOffset = i1.normal * scene.ShadowBias;
-                    reflective = GetRayColor(new Ray(i1.position + normalOffset, rv), scene, depth - 1, (float)(weight * reflectivity / weightSum));
+                    reflective = GetRayColor(new Ray(i1.position + normalOffset, rv), scene, depth - 1, (float)(weight * Ks));
                     Interlocked.Increment(ref Statistics.ReflectionRays);
                 }
-                else
-                    reflectivity = 0.0f;
-
-                float transparency = (float)Math.Max((1.0 - i1.localAlpha), pm.KTransparency);
 
                 Vector3d refractive = new Vector3d();
-                if (refraction && (globalAlpha < 0.95 || localAlpha < 0.95)) // TODO: Fix
+                if (refractions && (1-globalAlpha)+(1-localAlpha) >= MinWeight)
                 {
-                    weightSum += transparency;
                     Vector3d refracted;
                     refracted = Help.Refract(ray.direction, i1.normal, (i1.material as PhongMaterial).N);
 
@@ -107,28 +90,34 @@ namespace mhn_rt
                     {
                         refracted.Normalize();
                         var offset = refracted * scene.ShadowBias; // move slightly in the direction of the ray
-                        refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)(weight * transparency / weightSum));
+                        refractive = GetRayColor(new Ray(i1.position + offset, refracted), scene, depth - 1, (float)((1 - globalAlpha) + (1 - localAlpha)));
                         Interlocked.Increment(ref Statistics.RefractionRays);
                     }
                     else
                     {
-                        refractive = reflective;
+                        refractive = reflective; // total internal reflection
                     }
                 }
-                else
-                    transparency = 0.0f;
 
                 Vector3d ambient = (Vector3d)i1.color;
 
                 specular = new Vector3d(Math.Max(specular.X, reflective.X), Math.Max(specular.Y, reflective.Y), Math.Max(specular.Z, reflective.Z));
 
                 Vector3d color = Vector3d.Zero;
-                color += globalAlpha * (Kd * localAlpha * diffuse + Ka * ambient * localAlpha + Ks * specular * localAlpha + (Ks+Kd+Ka) * (1.0 - localAlpha) * refractive);
 
                 double cos = Vector3d.Dot(ray.direction.Normalized(), i1.normal.Normalized());
                 double n = cos >= 0.0 ? (i1.material as PhongMaterial).N : 1.0 / (i1.material as PhongMaterial).N;
                 double schlick = Help.Schlick(Math.Abs(cos), n);
-                color += (Vector3d)i1.color * (1-globalAlpha) * (schlick * reflective + (1.0-schlick) * refractive);
+
+                color += globalAlpha * localAlpha * Ks * specular; // solid specular
+                color += globalAlpha * localAlpha * Kd * diffuse;
+                color += globalAlpha * localAlpha * Ka * ambient;
+
+                color += globalAlpha * (1 - localAlpha) * refractive; // true transparency (ignores intersection point color)
+
+                // whole material transparency
+                color += (1 - globalAlpha) * schlick * reflective;
+                color += (1 - globalAlpha) * (1 - schlick) * refractive * (Vector3d)i1.color;
 
                 return color;
             }
