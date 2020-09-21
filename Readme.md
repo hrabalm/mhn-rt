@@ -18,7 +18,7 @@
 - OpenTK (used for Vectors and Matrices)
 
 ## Usage:
-Run the application, either from Visual Studio or by directly starting the executable. Note that current working directory has to be the one with the executable and that it has to contain the testModels directory (which is copied on build).
+Run the application, either from Visual Studio or by directly starting the executable. Note that the current working directory has to be the one with the executable and that it has to contain the testModels directory (which is copied on build).
 
 Simple text based interface is implemented. After startup, the user is asked to select a builtin scene and specify parameters of resulting image (width, height, samples per pixel and filename)
 
