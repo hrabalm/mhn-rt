@@ -233,7 +233,7 @@ namespace mhn_rt
 
                     // decide whether it's better to create a leaf or split at found bucket
                     float leafCost = count;
-                    int maxInNode = 4; // TODO: FIX
+                    int maxInNode = 4;
                     if (count > maxInNode || minCost < leafCost) // split
                     {
                         // Partition
@@ -276,7 +276,7 @@ namespace mhn_rt
                                 break;
                             }
                         }
-                        //maybe create node here? TODO: Check
+
                         var left = RecursiveBuild(aux, start, mid, ref nodeCount);
                         var right = RecursiveBuild(aux, mid, end, ref nodeCount);
 
@@ -289,7 +289,6 @@ namespace mhn_rt
                         for (int i = start; i < end; i++)
                             indexes.Add(aux[i].triangleIndex);
                         result = new LeafNode(bb, indexes);
-                        //return result;
                     }
                 }
             }
