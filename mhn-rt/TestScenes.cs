@@ -17,48 +17,20 @@ namespace mhn_rt
             SceneNode rootNode = scene.RootIntersectable;
 
             var t = ObjLoader.LoadObjFile("cat.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(3.0) * Matrix4d.RotateX(MathHelper.PiOver2) * Matrix4d.RotateZ(MathHelper.Pi) * Matrix4d.RotateY(1.75 * MathHelper.Pi) * Matrix4d.CreateTranslation(0.4, -1.51, -2.5);
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(4.0) * Matrix4d.RotateX(MathHelper.PiOver2) * Matrix4d.RotateZ(MathHelper.Pi) * Matrix4d.RotateY(1.75 * MathHelper.Pi) * Matrix4d.CreateTranslation(-0.4, -1.51, -2);
             rootNode.AddChild(t);
-
-            var s = new SceneNode();
-            s.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.CreateTranslation(-3.55, 0.75, -6.0); ;
-            var o = new Sphere(Vector3d.Zero, 3.0, new PhongMaterial());
-            (o.Material as PhongMaterial).KTransparency = 0.0;
-            (o.Material as PhongMaterial).Texture = new CheckerTexture3D();
-            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Period = 0.01;
-            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Color1 = new Vector3d(0.6, 0.2, 0.2);
-            ((o.Material as PhongMaterial).Texture as CheckerTexture3D).Color2 = new Vector3d(0.2, 0.6, 0.2);
-
-            s.AddChild(o);
-            rootNode.AddChild(s);
-
-            s = new SceneNode();
-            s.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.25) * Matrix4d.CreateTranslation(-0.45, 0.0, -1.0);
-            var pm = new PhongMaterial();
-            pm.KTransparency = 1.0;
-            pm.N = 1.5;
-            s.AddChild(new Sphere(Vector3d.Zero, 1.0, pm));
-            rootNode.AddChild(s);
 
             t = ObjLoader.LoadObjFile("Sylvanas.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.50) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(2.5, -1.525, -2);
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(2.0) * Matrix4d.RotateY(0.0) * Matrix4d.CreateTranslation(2.5, -1.525, -2);
             rootNode.AddChild(t);
 
-            PhongMaterial npm = new PhongMaterial() { Kd = 0.81, Ks = 0.01, Ka = 0.1 };
+            PhongMaterial npm = new PhongMaterial() { Kd = 0.8, Ks = 0.1, Ka = 0.1 };
             npm.Texture = new CheckerTexture3D();
-            (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.1, 0.3, 0.1);
-            (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
+            (npm.Texture as CheckerTexture3D).Color1 = new Vector3d(0.0, 1.0, 1.0);
+            (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.0, 0.5, 1.0);
             rootNode.AddChild(new Sphere(new Vector3d(0, -1001.5, -1), 1000, npm));
 
-            var m2 = new PhongMaterial();
-            m2.Color = new Vector3(0.9f, 0.0f, 0.0f);
-            m2.Ks = 0.3;
-            m2.Ka = 0.1;
-            m2.Kd = 0.6;
-            m2.KTransparency = 0.0;
-            rootNode.AddChild(new Sphere(new Vector3d(-1.5, 0, -1.0), 0.25, m2));
-
-            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.0, -0.5, -1.0).Normalized(), Intensity = 1.0 });
+            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.0, -0.5, -1.0).Normalized(), Intensity = 1.5 });
             scene.Camera = new Camera(new Vector3d(0.0, 0.0, 0.5), new Vector3d(0.0, 0.0, -1.0), new Vector3d(0.0, 1.0, 0.0));
 
             return scene;
@@ -110,7 +82,6 @@ namespace mhn_rt
             (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
             rootNode.AddChild(new Sphere(new Vector3d(0, -1001, -1), 1000, npm));
 
-            //var t = ObjLoader.LoadObjFile("chickenV2.obj");
             var t = ObjLoader.LoadObjFile("bunny.obj");
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.75, -1.1, -0.85);
             rootNode.AddChild(t);
@@ -122,21 +93,19 @@ namespace mhn_rt
             (t.objects[0] as TriangleManager).GetTrianglesMesh(0).Material = t.Material;
             rootNode.AddChild(t);
 
-            //PhongMaterial tpt = new PhongMaterial() { Kd = 0.8, Ks = 0.0, Ka = 0.2 };
-            //t.Material = tpt;
             t = new SceneNode();
             var pm = new PhongMaterial() { Kd = 0.10, Ks = 0.0, Ka = 0.0, H = 500};
-            //pm.Texture = new BitmapTexture("Orange_001_COLOR.png");
-            pm.NormalMap = new BitmapTexture("brickwall_normal.jpg");
-            t.AddChild(new Sphere(new Vector3d(2.0, 0.5, -1.0), 0.8, pm));
+            pm.NormalMap = new CheckerTexture();
+            t.AddChild(new Sphere(new Vector3d(2.0, -0.5, -1.0), 0.5, pm));
             rootNode.AddChild(t);
-            // todo normal map + texture
 
-            scene.LightSources.Add(new PointLight { Position = new Vector3d(-0.5, 0.5, 1.0), Intensity = 1.0 });
-            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.1, -0.75), Intensity = 0.25 });
+            pm = new PhongMaterial() { Kd = 0.10, Ks = 0.0, Ka = 0.0, H = 500 };
+            pm.Texture = new BitmapTexture("lorem.png");
+            t.AddChild(new Sphere(new Vector3d(2.0, 1.5, -1.0), 0.5, pm));
+            rootNode.AddChild(t);
+
+            scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.1, -0.5, -0.75), Intensity = 1.0 });
             scene.Camera = new Camera(new Vector3d(0.0, 0.0, 1.0), new Vector3d(0.0, 0.0, -0.8), new Vector3d(0.0, 1.0, 0.0));
-            //scene.Camera.
-            // TODO: Set higher FOW
 
             return scene;
         }
