@@ -1,5 +1,7 @@
 # mhn-rt Technical Documentation
 
+`mhn-rt` is a simple ray tracer written in C#. `OpenTK` is used for its implementation of vectors, matrices and transformations.
+
 ## Code structure
 
 ### Scene related:
@@ -47,7 +49,7 @@
 - represents a single object made of triangles, can be loaded from .obj using `ObjLoader`
 - internally stores triangles in Bounding Volume Hierarchy(BVH) to enable fast intersection search (log N instead of N):
 	- BVH is a binary tree such that Axis Aligned Bounding Box(AABB) of a parent encloses those of its children
-	- When looking for intersection, if a ray doesn't intersect with the bounding box 
+	- When looking for intersection, if a ray doesn't intersect with the bounding box of a tree or a subtree, we know that it doesn't intersect with any object inside. If it does, we have to test intersection with its children (and potentially with the triangles themselves). In conclusion, this data structure helps us prove that a ray doesn't hit the object, not the oposite. (That is usually reasonable approach however, e.g.: A single complicated object made of many triangles may take up small portion of the screen. We learn that most rays don't intersect any of its triangles quickly and since BVH is tree data structure (as opposed to only providing top level bounding box), the same can be said when talking about smaller parts of the object itself)
 	- (top-down) BVH construction used is described in-depth in [PBRT](http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html), short overview:
 		- two types of nodes used, both have their bounding box:
 			- `LeafNode` - contains one or several triangles not worth splitting further
@@ -125,4 +127,5 @@ public static void RegisterScenes()
 - Map_kd
 - bump
 
-caveat: object can have only a single color (Ka, Kd and Ks)
+##### Caveats:
+- Ka, Kd and Ks share the same color. When used with this project, they are meant to represent only coefficients of their components.
