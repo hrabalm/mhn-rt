@@ -16,7 +16,7 @@ namespace mhn_rt
     {
         public bool Multithreading { get; set; } = true;
         public bool Tracing { get; set; } = true;
-        public int MaxDepth { get; set; } = 100;
+        public int MaxDepth { get; set; } = 12;
         Stopwatch stopwatch = new Stopwatch();
         IRayTracer raytracer;
 
