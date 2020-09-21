@@ -115,7 +115,7 @@ namespace mhn_rt
             root = RecursiveBuild(aux, 0, aux.Count, ref nodeCount);
         }
 
-        protected AbstractNode RecursiveBuild(List<TriangleInfo> aux, int start, int end, ref int nodeCount)
+        AbstractNode RecursiveBuild(List<TriangleInfo> aux, int start, int end, ref int nodeCount)
         {
             AbstractNode result;
 
@@ -494,6 +494,43 @@ namespace mhn_rt
 
             return (Vector2)(u * (Vector2d)(b) + v * (Vector2d)(c) + w * (Vector2d)(a));
         }
+
+        struct TriangleInfo
+        {
+            public readonly int triangleIndex;
+            public BoundingBox bounds;
+            public Vector3 centroid;
+
+            /// <summary>
+            /// Auxiliary structure used when construing BVH
+            /// </summary>
+            /// <param name="triangleIndex"></param>
+            public TriangleInfo(int triangleIndex, TriangleManager node)
+            {
+                this.triangleIndex = triangleIndex;
+                this.bounds = default;
+                this.centroid = default;
+
+                FindBoundsAndCentroid(node);
+            }
+
+            public void FindBoundsAndCentroid(TriangleManager node) //
+            {
+                Vector3 v1, v2, v3;
+                node.GetTriangleVertices(triangleIndex, out v1, out v2, out v3);
+
+                bounds = new BoundingBox(new Vector3(Math.Min(v1.X, Math.Min(v2.X, v3.X)), Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)), Math.Min(v1.Z, Math.Min(v2.Z, v3.Z))),
+                  new Vector3(Math.Max(v1.X, Math.Max(v2.X, v3.X)), Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)), Math.Max(v1.Z, Math.Max(v2.Z, v3.Z))));
+
+                centroid = (v1 + v2 + v3) / 3;
+            }
+        }
+
+        public struct BucketInfo
+        {
+            public int count;
+            public BoundingBox bounds;
+        }
     }
 
     class Mesh
@@ -691,43 +728,6 @@ namespace mhn_rt
                 return true;
             return false;
         }
-    }
-
-    struct TriangleInfo
-    {
-        public readonly int triangleIndex;
-        public BoundingBox bounds;
-        public Vector3 centroid;
-
-        /// <summary>
-        /// Auxiliary structure used when construing BVH
-        /// </summary>
-        /// <param name="triangleIndex"></param>
-        public TriangleInfo(int triangleIndex, TriangleManager node)
-        {
-            this.triangleIndex = triangleIndex;
-            this.bounds = default;
-            this.centroid = default;
-
-            FindBoundsAndCentroid(node);
-        }
-
-        public void FindBoundsAndCentroid(TriangleManager node) //
-        {
-            Vector3 v1, v2, v3;
-            node.GetTriangleVertices(triangleIndex, out v1, out v2, out v3);
-
-            bounds = new BoundingBox(new Vector3(Math.Min(v1.X, Math.Min(v2.X, v3.X)), Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)), Math.Min(v1.Z, Math.Min(v2.Z, v3.Z))),
-              new Vector3(Math.Max(v1.X, Math.Max(v2.X, v3.X)), Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)), Math.Max(v1.Z, Math.Max(v2.Z, v3.Z))));
-
-            centroid = (v1 + v2 + v3) / 3;
-        }
-    }
-
-    public struct BucketInfo
-    {
-        public int count;
-        public BoundingBox bounds;
     }
 
     public class TriangleIntersectionInfo
