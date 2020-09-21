@@ -99,8 +99,7 @@ namespace mhn_rt
 
                 if (pm.NormalMap != null)
                 {
-                    double la;
-                    var bc = pm.NormalMap.GetColor(uv, position, out la);
+                    var bc = pm.NormalMap.GetColor(uv, position, out _);
                     Vector3d dn = 2.0 * bc - Vector3d.One;
                     normal += dn;
                     normal.Normalize();
