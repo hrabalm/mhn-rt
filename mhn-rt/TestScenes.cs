@@ -24,7 +24,7 @@ namespace mhn_rt
             rootNode.AddChild(new Sphere(new Vector3d(0.25, 0.0, 0), 0.5, glass));
             rootNode.AddChild(new Sphere(new Vector3d(1.55, -0.10, 0), 0.40, npm));
 
-            var t = ObjLoader.LoadObjFile("teapot.obj");
+            var t = ObjLoader.LoadObjFile("testModels/teapot.obj");
             t.ToParent = Matrix4d.Identity * Matrix4d.Scale(0.35) * Matrix4d.RotateY(0.1) * Matrix4d.CreateTranslation(-1.5, 0.0, -0.75);
             rootNode.AddChild(t);
 
@@ -52,12 +52,12 @@ namespace mhn_rt
             (npm.Texture as CheckerTexture3D).Color2 = new Vector3d(0.3, 0.5, 0.3);
             rootNode.AddChild(new Sphere(new Vector3d(0, -1001, -1), 1000, npm));
 
-            var t = ObjLoader.LoadObjFile("bunny.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.75, -1.1, -0.85);
+            var t = ObjLoader.LoadObjFile("testModels/bunny.obj");
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(-1.65, -1.1, -0.85);
             rootNode.AddChild(t);
 
-            t = ObjLoader.LoadObjFile("bunny.obj");
-            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0, -1.1, -0.85);
+            t = ObjLoader.LoadObjFile("testModels/bunny.obj");
+            t.ToParent = Matrix4d.Identity * Matrix4d.Scale(1.0) * Matrix4d.RotateY(0) * Matrix4d.CreateTranslation(0.3, -1.1, -0.85);
             t.Material = new PhongMaterial();
             (t.Material as PhongMaterial).Texture = new CheckerTexture3D();
             (t.objects[0] as TriangleManager).GetTrianglesMesh(0).Material = t.Material;
@@ -66,16 +66,16 @@ namespace mhn_rt
             t = new SceneNode();
             var pm = new PhongMaterial() { Kd = 0.10, Ks = 0.0, Ka = 0.0, H = 500};
             pm.Texture = new CheckerTexture();
-            t.AddChild(new Sphere(new Vector3d(2.0, -0.5, -1.0), 0.5, pm));
+            t.AddChild(new Sphere(new Vector3d(2.3, -0.5, -1.0), 0.5, pm));
             rootNode.AddChild(t);
 
             pm = new PhongMaterial() { Kd = 0.10, Ks = 0.0, Ka = 0.0, H = 500 };
-            pm.Texture = new BitmapTexture("lorem.png");
-            t.AddChild(new Sphere(new Vector3d(2.0, 1.5, -1.0), 0.5, pm));
+            pm.Texture = new BitmapTexture("testModels/lorem.png");
+            t.AddChild(new Sphere(new Vector3d(2.3, 1.5, -1.0), 0.5, pm));
             rootNode.AddChild(t);
 
             scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.4, -0.5, -0.75), Intensity = 1.0 });
-            scene.Camera = new Camera(new Vector3d(0.0, 0.0, 1.0), new Vector3d(0.0, 0.0, -0.8), new Vector3d(0.0, 1.0, 0.0));
+            scene.Camera = new Camera(new Vector3d(0.5, 0.0, 1.5), new Vector3d(0.0, 0.0, -0.8), new Vector3d(0.0, 1.0, 0.0));
 
             return scene;
         }
