@@ -22,7 +22,7 @@ namespace mhn_rt
 
         public static Vector3d Refract(Vector3d vector, Vector3d normal, double n)
         {
-            if (n - 1.0 <= double.Epsilon)
+            if (Math.Abs(n - 1.0) <= double.Epsilon)
                 return vector;
 
             vector.Normalize();
