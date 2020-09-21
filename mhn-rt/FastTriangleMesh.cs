@@ -531,6 +531,31 @@ namespace mhn_rt
             public int count;
             public BoundingBox bounds;
         }
+
+        public class AbstractNode
+        {
+            public BoundingBox bounds;
+        }
+
+        public class LeafNode : AbstractNode
+        {
+            public IList<int> triangleIndexes;
+            public LeafNode(BoundingBox boundingBox, IList<int> triangles) // leaf node
+            {
+                this.bounds = boundingBox;
+                this.triangleIndexes = triangles;
+            }
+        }
+
+        public class InnerNode : AbstractNode
+        {
+            public AbstractNode[] children = null;
+            public InnerNode(BoundingBox boundingBox, AbstractNode child0, AbstractNode child1) // inner node
+            {
+                this.bounds = boundingBox;
+                this.children = new AbstractNode[] { child0, child1 };
+            }
+        }
     }
 
     class Mesh
@@ -648,30 +673,7 @@ namespace mhn_rt
     #endregion
 
     #region Auxiliary structures
-    public class AbstractNode
-    {
-        public BoundingBox bounds;
-    }
-
-    public class LeafNode : AbstractNode
-    {
-        public IList<int> triangleIndexes;
-        public LeafNode(BoundingBox boundingBox, IList<int> triangles) // leaf node
-        {
-            this.bounds = boundingBox;
-            this.triangleIndexes = triangles;
-        }
-    }
-
-    public class InnerNode : AbstractNode
-    {
-        public AbstractNode[] children = null;
-        public InnerNode(BoundingBox boundingBox, AbstractNode child0, AbstractNode child1) // inner node
-        {
-            this.bounds = boundingBox;
-            this.children = new AbstractNode[] { child0, child1 };
-        }
-    }
+    
 
     public struct TextureCoords
     {
