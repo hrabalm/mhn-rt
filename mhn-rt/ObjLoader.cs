@@ -2,6 +2,7 @@
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 using OpenTK;
 using System.Threading.Tasks;
 
@@ -38,16 +39,14 @@ namespace mhn_rt
 
                 var tokens = line.Split(new char[] { ' ', '\t' }, options : StringSplitOptions.RemoveEmptyEntries); // split by whitespace
 
-                bool smooth = false;
-
-                float a, b, c; // TODO: Invariant culture
+                float a, b, c;
                 switch (tokens[0])
                 {
                     case "v":
                         //Debug.Assert(tokens.Length == 4);
-                        float.TryParse(tokens[1], out a);
-                        float.TryParse(tokens[2], out b);
-                        float.TryParse(tokens[3], out c);
+                        float.TryParse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture, out a);
+                        float.TryParse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture, out b);
+                        float.TryParse(tokens[3], NumberStyles.Float, CultureInfo.InvariantCulture, out c);
 
                         vertices.Add(new Vector3(a, b, c));
                         currentObject.AddVertex(new Vector3(a, b, c));
@@ -56,8 +55,8 @@ namespace mhn_rt
                     case "vt": // only u v, TODO: v is optional (w is optional)
                         float u, v; // TODO: Invariant culture
                         //Debug.Assert(tokens.Length == 3);
-                        float.TryParse(tokens[1], out u);
-                        float.TryParse(tokens[2], out v);
+                        float.TryParse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture, out u);
+                        float.TryParse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture, out v);
 
                         textureCoords.Add(new Vector2(u, v));
 
@@ -65,9 +64,9 @@ namespace mhn_rt
                     case "vn":
                         //float a, b, c; // TODO: Invariant culture
                         //Debug.Assert(tokens.Length == 4);
-                        float.TryParse(tokens[1], out a);
-                        float.TryParse(tokens[2], out b);
-                        float.TryParse(tokens[3], out c);
+                        float.TryParse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture, out a);
+                        float.TryParse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture, out b);
+                        float.TryParse(tokens[3], NumberStyles.Float, CultureInfo.InvariantCulture, out c);
 
                         normals.Add(new Vector3(a, b, c));
 
@@ -81,9 +80,9 @@ namespace mhn_rt
                         var p2 = tokens[2].Split('/');
                         var p3 = tokens[3].Split('/');
 
-                        int.TryParse(p1[0], out v1);
-                        int.TryParse(p2[0], out v2);
-                        int.TryParse(p3[0], out v3);
+                        int.TryParse(p1[0], NumberStyles.Float, CultureInfo.InvariantCulture, out v1);
+                        int.TryParse(p2[0], NumberStyles.Float, CultureInfo.InvariantCulture, out v2);
+                        int.TryParse(p3[0], NumberStyles.Float, CultureInfo.InvariantCulture, out v3);
 
                         int triangleIndex;
 
@@ -102,7 +101,9 @@ namespace mhn_rt
 
                         if (p1.Length >= 2)
                         {
-                            if (int.TryParse(p1[1], out t1) && int.TryParse(p2[1], out t2) && int.TryParse(p3[1], out t3))
+                            if (int.TryParse(p1[1], NumberStyles.Float, CultureInfo.InvariantCulture, out t1)
+                                && int.TryParse(p2[1], NumberStyles.Float, CultureInfo.InvariantCulture, out t2)
+                                && int.TryParse(p3[1], NumberStyles.Float, CultureInfo.InvariantCulture, out t3))
                             {
                                 if (t1 < 0)
                                     t1 = textureCoords.Count + t1 + 1;
@@ -117,7 +118,9 @@ namespace mhn_rt
 
                         if (p1.Length >= 3)
                         {
-                            if (int.TryParse(p1[2], out n1) && int.TryParse(p2[2], out n2) && int.TryParse(p3[2], out n3))
+                            if (int.TryParse(p1[2], NumberStyles.Float, CultureInfo.InvariantCulture, out n1)
+                                && int.TryParse(p2[2], NumberStyles.Float, CultureInfo.InvariantCulture, out n2)
+                                && int.TryParse(p3[2], NumberStyles.Float, CultureInfo.InvariantCulture, out n3))
                             {
                                 if (n1 < 0)
                                     n1 = normals.Count + n1 + 1;
@@ -136,17 +139,16 @@ namespace mhn_rt
                     case "o":
                         break;
                     case "s": // going to ignore smooth groups for now
-                        if (tokens.Length >= 2)
-                        {
-                            string groupName = tokens[1];
-                            int groupNumber;
+                        //if (tokens.Length >= 2)
+                        //{
+                        //    string groupName = tokens[1];
+                        //    int groupNumber;
 
-                            if (groupName == "off" || groupName == "0")
-                                smooth = false;
-                            else
-                                int.TryParse(groupName, out groupNumber);
-                        }
-                        smooth = true;
+                        //    if (groupName == "off" || groupName == "0")
+                        //    
+                        //    else
+                        //        int.TryParse(groupName, out groupNumber);
+                        //}
                         break;
                     case "usemtl":
                         string name = tokens[1];
@@ -206,16 +208,16 @@ namespace mhn_rt
                         materials.Add(tokens[1], currentMaterial);
                         break;
                     case "Ka": // currently only single coefficient for all basic colors is supported
-                        r = double.Parse(tokens[1]);
-                        g = double.Parse(tokens[2]);
-                        b = double.Parse(tokens[3]);
+                        r = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        g = double.Parse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        b = double.Parse(tokens[3], NumberStyles.Float, CultureInfo.InvariantCulture);
                         m = Math.Max(r, Math.Max(g, b));
                         (currentMaterial.Material as PhongMaterial).Ka = m;
                         break;
                     case "Kd":
-                        r = double.Parse(tokens[1]);
-                        g = double.Parse(tokens[2]);
-                        b = double.Parse(tokens[3]);
+                        r = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        g = double.Parse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        b = double.Parse(tokens[3], NumberStyles.Float, CultureInfo.InvariantCulture);
                         m = Math.Max(r, Math.Max(g, b));
                         r /= m;
                         g /= m;
@@ -224,9 +226,9 @@ namespace mhn_rt
                         (currentMaterial.Material as PhongMaterial).Kd = m;
                         break;
                     case "Ks":
-                        r = double.Parse(tokens[1]);
-                        g = double.Parse(tokens[2]);
-                        b = double.Parse(tokens[3]);
+                        r = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        g = double.Parse(tokens[2], NumberStyles.Float, CultureInfo.InvariantCulture);
+                        b = double.Parse(tokens[3], NumberStyles.Float, CultureInfo.InvariantCulture);
                         m = Math.Max(r, Math.Max(g, b));
                         r /= m;
                         g /= m;
@@ -241,20 +243,19 @@ namespace mhn_rt
                     case "illum":
                         break;
                     case "Ns":
-                        (currentMaterial.Material as PhongMaterial).H = double.Parse(tokens[1]);
+                        (currentMaterial.Material as PhongMaterial).H = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
                         break;
                     case "Ni":
-                        (currentMaterial.Material as PhongMaterial).N = double.Parse(tokens[1]);
+                        (currentMaterial.Material as PhongMaterial).N = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
                         break;
                     case "d":
                         // TODO: Might fail with -halo
-                        (currentMaterial.Material as PhongMaterial).KTransparency = double.Parse(tokens[1]);
+                        (currentMaterial.Material as PhongMaterial).KTransparency = double.Parse(tokens[1], NumberStyles.Float, CultureInfo.InvariantCulture);
                         if ((currentMaterial.Material as PhongMaterial).KTransparency < 0.0)
                             Console.WriteLine($"{(currentMaterial.Material as PhongMaterial).KTransparency}");
                         break;
                     case "map_Kd":
                         (currentMaterial.Material as PhongMaterial).Texture = new BitmapTexture(tokens[1]);
-                        //(currentMaterial.Material as PhongMaterial).Texture = new CheckerTexture3D();
                         break;
                     case "bump":
                         (currentMaterial.Material as PhongMaterial).NormalMap = new BitmapTexture(tokens[1]);
