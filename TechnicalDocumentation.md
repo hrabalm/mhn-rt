@@ -70,6 +70,26 @@
 ### TriangleManager.cs:Mesh
 - represents a subgroup of triangles in its parent `TriangleManager` sharing a common material. All `TriangleManager` have a single `.DefaultMesh`. Additional `Mesh` are for example when loading .obj files that use material groups.
 
+### Scene.cs:SceneNode
+- `SceneNode` allows us to create more complex scenes composed of any number of objects of different type
+- it represents a single node in a tree-like structure
+- can have any number of children
+- can have it's own coordinate system (set by this.ToParent)
+	- consequently, the whole subtree is moved together
+- note that a single instance of `SceneNode` should not be reused (it can only have a single parent)
+	- e.g. if `a`, `b`, `c` are intances of `SceneNode`, if `a` is a child of `b`, it can't be child of `c`
+	- no cycles are allowed of course
+
+### Scene.cs:Scene
+- represents scene:
+	- objects
+	- camera
+	- lights
+	- background
+- `SceneNode RootIntersectable` - `SceneNode` used as a root for all other objects present in the whole scene
+- `IList<ILight> LightSources` - list of lights (ILight) interacting with the scene
+- `IBackground Background`
+
 ## Creating a new scene
 
 ### Create a method which generates or loades scene:
@@ -83,7 +103,7 @@ public static Scene MyNewScene()
     SceneNode rootNode = scene.RootIntersectable;
 
     // Add your objects as children of rootNode
-	rootNode.AddChild(new Sphere(new Vector3d(2.3, -0.5, -1.0), 0.5, new PhongMaterial()), Matrix4d.Identity)
+	rootNode.AddChild(new Sphere(new Vector3d(2.3, -0.5, -1.0), 0.5, new PhongMaterial()));
 			
 	// Add light sources, e.g.: DirectionalLight, PointLight
     scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.4, -0.5, -0.75), Intensity = 1.0 });
@@ -109,6 +129,14 @@ public static void RegisterScenes()
 PhongMaterial pm = new PhongMaterial();
 pm.Color = new Vector3(1.0, 1.0, 1.0); // material color, unless overriden by texture
 pm.H = 5; // material glosiness
+pm.Kd = 0.5; // coefficient of diffuse reflection
+pm.Ks = 0.4; // coefficient of specular reflection
+pm.Ka = 0.1; // coefficient of ambient light
+
+pm.N = 1.0; // index of refraction, used for transparent objects
+pm.KTransparency = 0.0; // inverse to alpha value
+
+pm.Texture = new CheckerTexture3D(); // texture used to determine color, if 2d texture is used, object has to have uv mapping implemented
 ```
 
 ### Supported .obj and .mtl statements
