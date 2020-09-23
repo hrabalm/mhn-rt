@@ -50,15 +50,15 @@
 - internally stores triangles in Bounding Volume Hierarchy(BVH) to enable fast intersection search (log N instead of N):
 	- BVH is a binary tree such that Axis Aligned Bounding Box(AABB) of a parent encloses those of its children
 	- When looking for intersection, if a ray doesn't intersect with the bounding box of a tree or a subtree, we know that it doesn't intersect with any object inside. If it does, we have to test intersection with its children (and potentially with the triangles themselves). In conclusion, this data structure helps us prove that a ray doesn't hit the object, not the oposite. (That is usually reasonable approach however, e.g.: A single complicated object made of many triangles may take up small portion of the screen. We learn that most rays don't intersect any of its triangles quickly and since BVH is tree data structure (as opposed to only providing top level bounding box), the same can be said when talking about smaller parts of the object itself)
-	- (top-down) BVH construction used is described in-depth in [PBRT](http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html), short overview:
+	- (top-down) BVH construction used is described in-depth in [PBRT](http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html), overview:
 		- two types of nodes used, both have their bounding box:
 			- `LeafNode` - contains one or several triangles not worth splitting further
 			- `InnerNode` - classic binary inner node, two children
 		1. Precalculate bounding boxes for individual triangles, store triangles in an array
-		2. Recursively build for a given segment of triangles(nodes) (starting with the whole array), method returns the root of the whole tree (or subtree):
+		2. Recursively build for a given segment of triangles (starting with the whole array), method returns the root of the whole tree (or subtree):
 			3. Find a bounding box of all triangles in the whole segment (bounding box of the node)
 			4. If only a single triangle is left, return `LeafNode` containing the triangle, else continue
-			5. Select axis which will be used to divide triangles(nodes) to two segments (position of triangle/node is determined by its centroid)
+			5. Select axis which will be used to divide triangles to two segments (position of triangle/node is determined by its centroid)
 			6. If triangles can't be reasonably separated (their centroids coincide), return `LeafNode` containing all of them, else continue.
 			7. Go through possible splitting points on the axis and calculate costs of splitting there using SAH
 			8. Find the best splitting point (minimal cost)
@@ -83,9 +83,7 @@ public static Scene MyNewScene()
     SceneNode rootNode = scene.RootIntersectable;
 
     // Add your objects as children of rootNode
-	rootNode.AddChild(new Sphere(new Vector3d(2.3, -0.5, -1.0), 0.5, new PhongMaterial()))
-	
-	// They can be 
+	rootNode.AddChild(new Sphere(new Vector3d(2.3, -0.5, -1.0), 0.5, new PhongMaterial()), Matrix4d.Identity)
 			
 	// Add light sources, e.g.: DirectionalLight, PointLight
     scene.LightSources.Add(new DirectionalLight { Direction = new Vector3d(0.4, -0.5, -0.75), Intensity = 1.0 });
@@ -104,6 +102,13 @@ public static void RegisterScenes()
 	// ...
     SceneRegistry.Scenes.Add("My New Scene", TestScenes.MyNewScene);
 }
+```
+
+### Phong Material
+```csharp
+PhongMaterial pm = new PhongMaterial();
+pm.Color = new Vector3(1.0, 1.0, 1.0); // material color, unless overriden by texture
+pm.H = 5; // material glosiness
 ```
 
 ### Supported .obj and .mtl statements
@@ -125,7 +130,7 @@ public static void RegisterScenes()
 - Ni
 - d
 - Map_kd
-- bump
+	- Ka, Kd and Ks share the same color, use Map_kd to load the texture
 
 ##### Caveats:
 - Ka, Kd and Ks share the same color. When used with this project, they are meant to represent only coefficients of their components.
