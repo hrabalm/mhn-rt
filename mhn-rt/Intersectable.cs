@@ -44,7 +44,7 @@ namespace mhn_rt
         {
             Intersection ret = new Intersection
             {
-                position = Vector3d.Transform(position, m),
+                position = Vector3d.TransformPosition(position, m),
                 normal = Vector3d.TransformNormal(normal, m), // TODO: TransformNormalInverse
                 t = t,
                 color = color,

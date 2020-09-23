@@ -62,10 +62,17 @@ namespace mhn_rt
             ToParent = Matrix4d.Identity;
         }
 
-        public void AddChild(IIntersectable child)
+        public void AddChild(IIntersectable child, Matrix4d toParent)
         {
             child.Parent = this;
             objects.Add(child);
+
+            ToParent = toParent;
+        }
+
+        public void AddChild(IIntersectable child)
+        {
+            AddChild(child, Matrix4d.Identity);
         }
 
         public IList<Intersection> Intersect(Ray ray)
